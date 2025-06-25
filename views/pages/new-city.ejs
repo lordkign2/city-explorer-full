@@ -1,0 +1,21 @@
+<%- include('../partials/navbar') %>
+
+<section class="max-w-2xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow">
+  <h1 class="text-2xl font-bold mb-4 dark:text-white">Add New City</h1>
+  <form action="/admin/cities" method="POST" class="space-y-4">
+    <input name="name" placeholder="City Name" required class="form-input w-full" />
+    
+    <select name="country" required class="form-select w-full">
+      <% countries.forEach(c => { %>
+        <option value="<%= c._id %>"><%= c.name %></option>
+      <% }) %>
+    </select>
+
+    <input name="imageUrl" placeholder="Image URL" class="form-input w-full" />
+    <textarea name="funFacts" placeholder="Fun facts (comma-separated)" class="form-textarea w-full"></textarea>
+
+    <button class="btn btn-primary w-full">Create City</button>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>

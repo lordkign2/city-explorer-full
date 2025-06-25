@@ -1,1 +1,6 @@
-console.log('JS working');
+module.exports = {
+    plugins: {
+      tailwindcss: {},
+      autoprefixer: {}
+    }
+  };

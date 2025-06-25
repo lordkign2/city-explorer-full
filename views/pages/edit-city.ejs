@@ -1,0 +1,21 @@
+<%- include('../partials/navbar') %>
+
+<section class="max-w-2xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow">
+  <h1 class="text-2xl font-bold mb-4 dark:text-white">Edit City</h1>
+  <form action="/admin/cities/<%= city._id %>?_method=PUT" method="POST" class="space-y-4">
+    <input name="name" value="<%= city.name %>" class="form-input w-full" required />
+
+    <select name="country" class="form-select w-full" required>
+      <% countries.forEach(c => { %>
+        <option value="<%= c._id %>" <%= c._id.equals(city.country) ? 'selected' : '' %>><%= c.name %></option>
+      <% }) %>
+    </select>
+
+    <input name="imageUrl" value="<%= city.imageUrl %>" class="form-input w-full" />
+    <textarea name="funFacts" class="form-textarea w-full"><%= city.funFacts.join(', ') %></textarea>
+
+    <button class="btn btn-primary w-full">Update City</button>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>

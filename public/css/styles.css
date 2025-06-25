@@ -1,1 +1,59 @@
-body { font-family: sans-serif; }
+/* Tailwind Base Layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Styles (optional) */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Button Styles */
+.btn {
+  @apply px-4 py-2 rounded-lg font-medium transition duration-200;
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700;
+}
+
+/* Card Shadow and Animations */
+.card {
+  @apply bg-white dark:bg-gray-900 rounded-xl shadow-card p-4;
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-out both;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Chat Message Bubble */
+.chat-bubble {
+  @apply p-3 rounded-xl max-w-xs break-words;
+}
+.chat-bubble.user {
+  @apply bg-indigo-100 dark:bg-indigo-800 text-black dark:text-white self-end;
+}
+.chat-bubble.other {
+  @apply bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 self-start;
+}
+
+/* Flash Message Overrides */
+.flash {
+  @apply px-4 py-2 mb-4 rounded text-center max-w-xl mx-auto;
+}
+.flash-success {
+  @apply bg-green-100 text-green-800;
+}
+.flash-error {
+  @apply bg-red-100 text-red-800;
+}

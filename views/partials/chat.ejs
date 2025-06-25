@@ -1,0 +1,68 @@
+<section class="mt-10">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Live City Chat</h2>
+  
+    <div id="chat-box" class="bg-gray-100 dark:bg-gray-800 p-4 h-64 overflow-y-scroll rounded shadow mb-4">
+      <ul id="messages" class="space-y-2">
+        <!-- Messages will be appended here via client JS -->
+      </ul>
+      <p id="typing-status" class="text-sm text-gray-500 dark:text-gray-400 italic"></p>
+    </div>
+  
+    <form id="chat-form" class="flex items-center space-x-2">
+      <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow form-input dark:bg-gray-700" required autocomplete="off" />
+      <button class="btn btn-primary">Send</button>
+    </form>
+  </section>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const room = '<%= city._id %>';
+    const user = "<%= user.username %>";
+    const avatar = "<%= user.avatarUrl %>";
+  
+    socket.emit('joinRoom', room);
+  
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const messages = document.getElementById('messages');
+    const typingStatus = document.getElementById('typing-status');
+  
+    chatInput.addEventListener('input', () => {
+      socket.emit('typing', room);
+    });
+  
+    chatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const msg = chatInput.value.trim();
+      if (msg) {
+        socket.emit('chatMessage', { room, user, avatar, text: msg });
+        chatInput.value = '';
+      }
+    });
+  
+    socket.on('message', data => {
+      const li = document.createElement('li');
+      li.className = 'flex items-start space-x-3';
+      li.innerHTML = `
+        <img src="${data.avatar}" class="w-8 h-8 rounded-full" />
+        <div>
+          <p class="text-sm text-gray-700 dark:text-gray-300">
+            <strong>${data.user}</strong>
+            <span class="text-xs text-gray-500 ml-2">${data.time}</span>
+          </p>
+          <p class="text-gray-800 dark:text-gray-200">${data.text}</p>
+        </div>
+      `;
+      messages.appendChild(li);
+      messages.scrollTop = messages.scrollHeight;
+      typingStatus.textContent = '';
+    });
+  
+    socket.on('typing', () => {
+      typingStatus.textContent = 'Someone is typing...';
+      setTimeout(() => {
+        typingStatus.textContent = '';
+      }, 2000);
+    });
+  </script>

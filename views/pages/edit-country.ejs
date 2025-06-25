@@ -1,0 +1,12 @@
+<%- include('../partials/navbar') %>
+
+<section class="max-w-2xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow">
+  <h1 class="text-2xl font-bold mb-4 dark:text-white">Edit Country</h1>
+  <form action="/admin/countries/<%= country._id %>?_method=PUT" method="POST" class="space-y-4">
+    <input name="name" value="<%= country.name %>" class="form-input w-full" required />
+    <input name="code" value="<%= country.code %>" class="form-input w-full" required />
+    <button class="btn btn-primary w-full">Update Country</button>
+  </form>
+</section>
+
+<%- include('../partials/footer') %>

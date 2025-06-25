@@ -1,1 +1,23 @@
-<h1><%= title || 'City Explorer' %></h1>
+
+<nav class="bg-white dark:bg-gray-900 shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">World Explorer 🌍</a>
+  
+      <div class="flex items-center space-x-4">
+        <% if (user) { %>
+          <a href="/dashboard" class="text-gray-700 dark:text-gray-200 hover:underline">Dashboard</a>
+          <a href="/auth/logout" class="text-red-500 dark:text-red-400 hover:underline">Logout</a>
+          <img src="<%= user.avatarUrl || '/images/default-avatar.png' %>" alt="avatar" class="w-8 h-8 rounded-full border">
+        <% } else { %>
+          <a href="/auth/login" class="text-gray-700 dark:text-gray-200 hover:underline">Login</a>
+          <a href="/auth/register" class="text-indigo-600 dark:text-indigo-400 font-semibold">Sign Up</a>
+        <% } %>
+  
+        <!-- Dark mode toggle -->
+        <button id="toggleDark" class="text-xl focus:outline-none">
+          <svg id="sunIcon" class="w-5 h-5 text-yellow-400 hidden" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="..." /></svg>
+          <svg id="moonIcon" class="w-5 h-5 text-gray-600 dark:text-white" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20"><path d="..." /></svg>
+        </button>
+      </div>
+    </div>
+  </nav>

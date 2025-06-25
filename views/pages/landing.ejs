@@ -1,1 +1,62 @@
-<h1><%= title || 'City Explorer' %></h1>
+<%- include('../partials/navbar') %>
+
+<!-- Background video hero -->
+<div class="relative h-screen overflow-hidden">
+  <video autoplay muted loop class="absolute w-full h-full object-cover z-0">
+    <source src="/videos/landing.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  <div class="absolute inset-0 bg-black bg-opacity-60 z-10"></div>
+  <div class="relative z-20 flex flex-col items-center justify-center h-full text-white text-center px-6">
+    <h1 class="text-5xl font-bold mb-4" data-aos="fade-up">Explore Cities & Countries Around the World</h1>
+    <p class="text-lg mb-6 max-w-2xl" data-aos="fade-up" data-aos-delay="100">
+      Discover amazing places, track weather, learn fun facts, and challenge yourself with trivia.
+    </p>
+    <a href="/auth/register" class="btn btn-primary" data-aos="fade-up" data-aos-delay="200">Get Started</a>
+  </div>
+</div>
+
+<!-- How it works -->
+<section class="py-16 bg-white dark:bg-gray-900 text-center">
+  <div class="max-w-4xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white" data-aos="fade-up">How It Works</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+      <div data-aos="fade-up">
+        <h3 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-2">Search</h3>
+        <p class="text-gray-600 dark:text-gray-300">Find cities or countries with rich data including maps, weather, and images.</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="100">
+        <h3 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-2">Learn</h3>
+        <p class="text-gray-600 dark:text-gray-300">Get fun facts, school info, and historical trivia about your favorite places.</p>
+      </div>
+      <div data-aos="fade-up" data-aos-delay="200">
+        <h3 class="text-xl font-semibold text-indigo-600 dark:text-indigo-400 mb-2">Connect</h3>
+        <p class="text-gray-600 dark:text-gray-300">Join the global chat per city and share insights with other explorers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trending Cities -->
+<section class="py-16 bg-gray-100 dark:bg-gray-800">
+  <div class="max-w-5xl mx-auto px-4">
+    <h2 class="text-3xl font-bold mb-8 text-gray-800 dark:text-white text-center" data-aos="fade-up">Trending Cities</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <% trendingCities.forEach(city => { %>
+        <div class="bg-white dark:bg-gray-900 rounded-lg shadow p-4" data-aos="fade-up" data-aos-delay="100">
+          <img src="<%= city.imageUrl || '/images/default-city.jpg' %>" alt="<%= city.name %>" class="rounded h-40 w-full object-cover mb-3">
+          <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-1"><%= city.name %></h3>
+          <p class="text-gray-500 dark:text-gray-400 text-sm"><%= city.countryName %></p>
+          <a href="/cities/<%= city._id %>" class="text-indigo-600 dark:text-indigo-400 text-sm hover:underline mt-2 inline-block">Explore →</a>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<%- include('../partials/footer') %>
+
+<!-- AOS Init -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
