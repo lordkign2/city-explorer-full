@@ -4,7 +4,10 @@
   "description": "A full-stack global explorer app with cities, countries, trivia, chat, weather and more.",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "build:css": "tailwindcss -i ./public/css/styles.css -o ./public/css/output.css --watch"
   },
   "keywords": [
     "world",
@@ -19,5 +22,26 @@
     "tailwind"
   ],
   "author": "Umeh kingsley",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.10.0",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^5.1.0",
+    "dotenv": "^16.5.0",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "md5": "^2.3.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.16.0",
+    "redis": "^5.5.6",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "nodemon": "^3.1.10",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.10"
+  }
 }
