@@ -4,16 +4,16 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 
 // GET /auth/login
-router.get('/login', authController.getLogin);
+router.get('/login', authController.showLogin);
 
 // POST /auth/login
-router.post('/login', authController.postLogin);
+router.post('/login', authController.login);
 
 // GET /auth/register
-router.get('/register', authController.getRegister);
+router.get('/register', authController.showRegister);
 
 // POST /auth/register
-router.post('/register', authController.postRegister);
+router.post('/register', authController.register);
 
 // GET /auth/logout
 router.get('/logout', authController.logout);

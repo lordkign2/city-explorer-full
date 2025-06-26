@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const gravatar = require('../utils/gravatar');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 // Show register form
 exports.showRegister = (req, res) => {

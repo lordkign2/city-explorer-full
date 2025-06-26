@@ -11,15 +11,15 @@ router.use(loginRequired);
 router.get('/', dashboardController.getDashboard);
 
 // GET /dashboard/settings
-router.get('/settings', dashboardController.getSettings);
+// router.get('/settings', dashboardController.getSettings);
 
-// POST /dashboard/settings
-router.post('/settings', dashboardController.updateSettings);
+// // POST /dashboard/settings
+// router.post('/settings', dashboardController.updateSettings);
 
-// GET /dashboard/favorites
-router.get('/favorites', dashboardController.getFavorites);
+// // GET /dashboard/favorites
+// router.get('/favorites', dashboardController.getFavorites);
 
-// GET /dashboard/trivia-history
-router.get('/trivia-history', dashboardController.getTriviaHistory);
+// // GET /dashboard/trivia-history
+// router.get('/trivia-history', dashboardController.getTriviaHistory);
 
 module.exports = router;

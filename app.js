@@ -16,7 +16,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect("mongodb+srv://loedkign:3TMO9NDAp23fvPET@cluster.6vwdf0w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster", {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('✅ MongoDB connected'))
@@ -27,7 +27,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'keyboard cat',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
+  store: MongoStore.create({ mongoUrl: "mongodb+srv://loedkign:3TMO9NDAp23fvPET@cluster.6vwdf0w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster" }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 day
 }));
 

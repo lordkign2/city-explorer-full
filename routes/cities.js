@@ -11,9 +11,9 @@ router.get('/:id', loginRequired, cityController.getCityPage);
 router.post('/:id/trivia', loginRequired, cityController.submitTrivia);
 
 // Optional: Add or remove a favorite city
-router.post('/:id/favorite', loginRequired, cityController.toggleFavorite);
+// router.post('/:id/favorite', loginRequired, cityController.toggleFavorite);
 
-// GET: trending cache
-router.get('/trending', cache("trending_cities"), cityController.getTrendingCites);
+// // GET: trending cache
+// router.get('/trending', cache("trending_cities"), cityController.getTrendingCites);
 
 module.exports = router;
