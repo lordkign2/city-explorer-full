@@ -1,9 +1,9 @@
 // controllers/cityController.js
 const City = require('../models/City');
 const Trivia = require('../models/Trivia');
-// const fetchWeather = require('../utils/weather');
-// const fetchHotels = require('../utils/hotels');
-// const fetchSchools = require('../utils/schools');
+const fetchWeather = require('../utils/weather');
+const fetchHotels = require('../utils/hotels');
+const fetchSchools = require('../utils/schools');
 const { getCityImage } = require('../utils/unsplash');
 const User = require('../models/User'); // Required to update trivia scores
 

@@ -1,3 +1,4 @@
+<%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
 
@@ -55,13 +56,11 @@
 
   <!-- Map -->
   <div id="map" class="h-64 rounded mb-6 shadow"></div>
-  <script>
-    const map = L.map('map').setView([<%= city.lat %>, <%= city.lng %>], 12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-    L.marker([<%= city.lat %>, <%= city.lng %>]).addTo(map)
-      .bindPopup('<%= city.name %>')
-      .openPopup();
-  </script>
+ 
+   <% const map = L.map('map').setView([<%= city.lat %>, <%= city.lng %>], 12); %>
+   <% L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); %>
+   <% L.marker([<%= city.lat %>, <%= city.lng %>]).addTo(map).bindPopup('<%= city.name %>').openPopup(); %>
+ 
 
   <!-- Trivia & Chat Sections -->
   <%- include('../partials/trivia', { city }) %>

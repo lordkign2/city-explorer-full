@@ -70,7 +70,7 @@ exports.login = async (req, res) => {
     res.redirect('/dashboard');
   } catch (err) {
     console.error('Login error:', err);
-    req.flash('error', 'Login failed');
+    req.flash('error', 'Login failed, please try again!');
     res.redirect('/auth/login');
   }
 };

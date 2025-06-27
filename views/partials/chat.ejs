@@ -13,11 +13,12 @@
       <button class="btn btn-primary">Send</button>
     </form>
   </section>
-  
+  <!-- const room = '< city._id %>'; -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const socket = io();
-    const room = '<%= city._id %>';
+   
+    const room = 'umeh';
     const user = "<%= user.username %>";
     const avatar = "<%= user.avatarUrl %>";
   

@@ -18,7 +18,9 @@ const io = new Server(server);
 // MongoDB connection
 mongoose.connect("mongodb+srv://loedkign:3TMO9NDAp23fvPET@cluster.6vwdf0w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster", {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
+  ssl: true,
+  tlsInsecure: true
 }).then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err));
 
@@ -36,10 +38,9 @@ app.use(flash());
 
 // Global flash middleware
 app.use((req, res, next) => {
-  res.locals.messages = {
-    error: req.flash('error'),
-    success: req.flash('success')
-  };
+  res.locals.error = req.flash('error');
+  res.locals.success = req.flash('success');
+
   res.locals.user = null;
   if (req.session.userId) {
     res.locals.user = {
