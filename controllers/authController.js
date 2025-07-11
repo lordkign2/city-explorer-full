@@ -1,6 +1,7 @@
-const User = require('../models/User');
-const gravatar = require('../utils/gravatar');
-const bcrypt = require('bcryptjs');
+var User = require('../models/User');
+var passport = require('passport');
+var gravatar = require('../utils/gravatar');
+var bcrypt = require('bcryptjs');
 
 // Show register form
 exports.showRegister = (req, res) => {
@@ -20,7 +21,6 @@ exports.register = async (req, res) => {
     }
 
     const avatarUrl = gravatar(email);
-
     const newUser = new User({
       username,
       email,
@@ -29,12 +29,20 @@ exports.register = async (req, res) => {
     });
 
     await newUser.save();
-
-    // Set session
-    req.session.userId = newUser._id;
-    req.session.userRole = 'user'; // default role
-    req.flash('success', 'Registration successful');
-    res.redirect('/dashboard');
+    //Auto login the new user
+    req.login(newUser, (err)=> {
+      if (err) {
+        req.flash("error", "Login after registration failed");
+        return res.redirect("/auth/login");
+      }
+      // Set session
+      req.session.userId = newUser._id;
+      req.session.userRole = 'user'; // default role
+      req.flash('success', 'Registration successful');
+      res.redirect('/dashboard');
+    })
+    
+   
   } catch (err) {
     console.error('Registration error:', err);
     req.flash('error', 'Registration failed');
@@ -48,31 +56,57 @@ exports.showLogin = (req, res) => {
 };
 
 // Handle login
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      req.flash('error', 'Invalid credentials');
-      return res.redirect('/auth/login');
-    }
-
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      req.flash('error', 'Incorrect password');
-      return res.redirect('/auth/login');
-    }
-
-    req.session.userId = user._id;
-    req.session.userRole = user.role || 'user'; // if admin support is added
-    req.flash('success', `Welcome back, ${user.username}!`);
-    res.redirect('/dashboard');
-  } catch (err) {
-    console.error('Login error:', err);
-    req.flash('error', 'Login failed, please try again!');
-    res.redirect('/auth/login');
-  }
+exports.login = async (req, res, next) => {
+  // try {
+    passport.authenticate("local", (err, user,info) => {
+      if (err) {
+        console.err(err);
+        req.flash("error", "something went wrong!");
+        return res.redirect("/auth/login");
+      }
+      if (!user) {
+        req.flash("error", info.message || "Invalid credential");
+        return res.redirect("/auth/login");
+      }
+      req.logIn(user, (err) => {
+        if (err) {
+          console.err(err);
+          req.flash("error", "Login failed");
+          return res.redirect("/auth/login");
+        }
+        // remember me
+        if (req.body.remember) {
+          req.session.cookies.maxAge = 1000 * 60 * 60 * 24 ;
+        } else {
+          req.session.cookie.expires = false;
+        }
+        console.log( user._id);
+        console.log( user.role);
+        req.session.userId =  user._id;
+        req.session.userRole = user.role || 'user'; // if admin support is added
+        
+        req.flash('success', `Welcome back, ${user.username}!`);
+        return res.redirect('/dashboard');
+      });
+      
+    })(req, res, next);
+    // const { email, password } = req.body;
+    // const isMatch = await User.comparePassword(password);  n =============
+    // if (!isMatch) {
+    //   req.flash('error', 'Incorrect password');
+    //   return res.redirect('/auth/login');
+    // }
+    // const user = res.locals.user
+    // if (!user) {
+    //   req.flash('error', 'Invalid credentials');
+    //   return res.redirect('/auth/login');
+    // }
+   
+  // } catch (err) {
+  //   console.error('Login error:', err);
+  //   req.flash('error', 'Login failed, please try again!');
+  //   res.redirect('/auth/login');
+  // }
 };
 
 // Logout

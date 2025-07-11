@@ -1,3 +1,4 @@
+<!-- ./views/pages/login.ejs -->
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
@@ -12,6 +13,7 @@
       <input
         type="email"
         name="email"
+        autocomplete="email"
         required
         class="form-input w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-lg"
       />
@@ -26,6 +28,14 @@
         required
         class="form-input w-full bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-lg"
       />
+    </div>
+
+    <!-- remember me -->
+    <div>
+      <label>
+        <input type="checkbox" name="remember" id="remember">
+        Remember Me
+      </label>
     </div>
 
     <!-- Submit -->

@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
+    //sidebar toggle
+    document.getElementById("toggleSidebar")?.addEventListener('click', () => {
+      const aside = document.querySelector('aside');
+      aside.classList.toggle('hidden');
+    })
   
     // Init AOS animations
     if (typeof AOS !== 'undefined') {

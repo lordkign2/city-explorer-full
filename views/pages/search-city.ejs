@@ -1,0 +1,67 @@
+<!-- ./views/pages/search-city.ejs -->
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/flashMessages') %>
+
+
+<section class="max-w-5xl mx-auto mt-8 p-6 bg-white dark:bg-gray-900 rounded-lg shadow">
+  
+    <h1 class="text-4xl font-bold mb-4 text-gray-800 dark:text-white"><%= city %>, <%= weather.country %></h1>
+  
+    <!-- Background Image -->
+    <!-- <div class="mb-6">
+      <img src="<%= city.imageUrl %>" alt="<%= city %> image" class="w-full rounded-lg shadow" />
+    </div> -->
+  
+    <!-- Weather -->
+    <div class="mb-4">
+      <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Current Weather</h2>
+      <% if (weather) { %>
+        <p class="text-gray-800 dark:text-gray-300">
+          <%= weather.city %>°C — <%= weather.country %>
+        </p>
+        <p class="text-gray-800 dark:text-gray-300">
+          🌤 <img src=" <%= weather.icon %>" alt=""> <%= weather.temperature %>°C — <%= weather.description %>
+        </p>
+        <p class="text-gray-800 dark:text-gray-300">
+          <%= weather.coord %>
+        </p>
+      <% } else { %>
+        <p class="text-red-500">Weather info unavailable</p>
+      <% } %>
+    </div>
+  
+    <!-- Hotels -->
+    <!-- <div class="mb-6">
+      <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Popular Hotels</h2>
+      <%// hotels.forEach(hotel => { %>
+        <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-2 shadow">
+          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%=// hotel.name %></p>
+          <p class="text-sm text-gray-600 dark:text-gray-400"><%=// hotel.address %></p>
+        </div>
+      <%// }) %>
+    </div>  -->
+  
+    <!-- Schools -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Educational Institutions</h2>
+      <% schools.forEach(school => { %>
+        <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-2 shadow">
+          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%= schools.city %></p>
+          <p class="text-sm text-gray-600 dark:text-gray-400"><%= schools.mockSchools %></p>
+        </div>
+      <% }) %>
+    </div>
+  
+    <!-- Fun Facts -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Fun Facts</h2>
+      <ul class="list-disc pl-6 text-gray-700 dark:text-gray-300">
+        <%// city.funFacts.forEach(fact => { %>
+          <li><%=// fact %></li>
+        <%// }) %>
+      </ul>
+    </div>
+</section>
+
+<%- include('../partials/footer') %>

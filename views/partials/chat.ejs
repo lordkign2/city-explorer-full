@@ -3,31 +3,51 @@
   
     <div id="chat-box" class="bg-gray-100 dark:bg-gray-800 p-4 h-64 overflow-y-scroll rounded shadow mb-4">
       <ul id="messages" class="space-y-2">
-        <!-- Messages will be appended here via client JS -->
+        <% messages.forEach(function(message) { %>
+          <li class="flex items-start space-x-3">
+            <img src="<%= message.senderAvatar %>" class="w-8 h-8 rounded-full" />
+            <div>
+              <p class="text-sm text-gray-700 dark:text-gray-300">
+                <strong><%= message.senderName %></strong>
+                <span class="text-xs text-gray-500 ml-2">
+                  <%= new Date(message.timestamp).toLocaleTimeString() %>
+                </span>
+              </p>
+              <p class="text-gray-800 dark:text-gray-200"><%= message.content %></p>
+            </div>
+          </li>
+        <% }) %>
       </ul>
       <p id="typing-status" class="text-sm text-gray-500 dark:text-gray-400 italic"></p>
     </div>
   
     <form id="chat-form" class="flex items-center space-x-2">
       <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow form-input dark:bg-gray-700" required autocomplete="off" />
-      <button class="btn btn-primary">Send</button>
+      <button type="submit"  class="btn btn-primary">Send</button>
     </form>
   </section>
   <!-- const room = '< city._id %>'; -->
   <script src="/socket.io/socket.io.js"></script>
   <script>
+  window.addEventListener('DOMContentLoaded', () => {
     const socket = io();
+    
    
-    const room = 'umeh';
-    const user = "<%= user.username %>";
-    const avatar = "<%= user.avatarUrl %>";
+    const room = '<%= cityId %>';
+    console.log("Joining room:", room);
+    const userName = "<%= user.username %>";
+    const avatarUrl = "<%= user.avatarUrl %>";
   
     socket.emit('joinRoom', room);
   
     const chatForm = document.getElementById('chat-form');
+    const chatBox = document.getElementById('chat-box');
     const chatInput = document.getElementById('chat-input');
     const messages = document.getElementById('messages');
     const typingStatus = document.getElementById('typing-status');
+    
+    chatBox.scrollTop = chatBox.scrollHeight;
+   
   
     chatInput.addEventListener('input', () => {
       socket.emit('typing', room);
@@ -35,28 +55,30 @@
   
     chatForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const msg = chatInput.value.trim();
+      console.log("Prevented form reload");
+      const msg = chatInput.value;
       if (msg) {
-        socket.emit('chatMessage', { room, user, avatar, text: msg });
+        socket.emit('chatMessage', { room, userName, avatarUrl, text: msg });
         chatInput.value = '';
       }
     });
   
-    socket.on('message', data => {
+    socket.on('chatMessage', (data) => {
+      console.log("received chat message:", data)
       const li = document.createElement('li');
       li.className = 'flex items-start space-x-3';
       li.innerHTML = `
-        <img src="${data.avatar}" class="w-8 h-8 rounded-full" />
+        <img src="${data.senderAvatar}" class="w-8 h-8 rounded-full" />
         <div>
           <p class="text-sm text-gray-700 dark:text-gray-300">
-            <strong>${data.user}</strong>
-            <span class="text-xs text-gray-500 ml-2">${data.time}</span>
+            <strong>${data.senderName}</strong>
+            <span class="text-xs text-gray-500 ml-2">${new Date(data.timestamp).toLocaleTimeString()}</span>
           </p>
-          <p class="text-gray-800 dark:text-gray-200">${data.text}</p>
+          <p class="text-gray-800 dark:text-gray-200">${data.content}</p>
         </div>
       `;
       messages.appendChild(li);
-      messages.scrollTop = messages.scrollHeight;
+      chatBox.scrollTop = chatBox.scrollHeight;
       typingStatus.textContent = '';
     });
   
@@ -66,4 +88,12 @@
         typingStatus.textContent = '';
       }, 2000);
     });
+
+    //error lgging/handling
+    process.on("unhandledRejection", (reason) => {
+      console.error("Unhandled promise rejection:", reason);
+    })
+
+   
+  });
   </script>
