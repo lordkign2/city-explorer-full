@@ -1,12 +1,43 @@
-<footer class="bg-gray-100 dark:bg-gray-800 py-6 text-center text-gray-600 dark:text-gray-300 mt-10">
-    <p>© <%= new Date().getFullYear() %> Legendary softwares. All rights reserved.</p>
-    <div class="mt-2 flex justify-center space-x-4">
-      <a href="https://github.com/" class="hover:underline">GitHub</a>
-      <a href="#" class="hover:underline">About</a>
-      <a href="mailto:lordkign!@gmail.com" class="hover:underline">Contact</a>
+<footer class="bg-gray-100 dark:bg-gray-900 py-6 text-center text-sm text-gray-600 dark:text-gray-400 mt-10 border-t border-gray-200 dark:border-gray-700 relative">
+  <div class="max-w-7xl mx-auto px-4">
+    <p>© <%= new Date().getFullYear() %> Legendary Softwares. All rights reserved.</p>
+
+    <!-- Social Links with Icons -->
+    <div class="mt-3 flex justify-center space-x-6">
+      <a href="https://github.com/" target="_blank" class="flex items-center space-x-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
+        <i data-lucide="github" class="w-5 h-5"></i><span>GitHub</span>
+      </a>
+      <a href="#" class="flex items-center space-x-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
+        <i data-lucide="info" class="w-5 h-5"></i><span>About</span>
+      </a>
+      <a href="mailto:lordkign!@gmail.com" class="flex items-center space-x-1 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
+        <i data-lucide="mail" class="w-5 h-5"></i><span>Contact</span>
+      </a>
     </div>
-  </footer>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>AOS.init();</script>
+  </div>
+
+  <!-- Scroll-to-Top Button -->
+  <button id="scrollToTop" class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg hidden transition-opacity duration-300 z-50" title="Back to Top">
+    <i data-lucide="arrow-up" class="w-5 h-5"></i>
+  </button>
+</footer>
+
+<!-- AOS & Lucide Init -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  AOS.init();
+  lucide.createIcons();
+
+  const scrollBtn = document.getElementById("scrollToTop");
+
+  window.addEventListener("scroll", () => {
+    scrollBtn.classList.toggle("hidden", window.scrollY < 200);
+  });
+
+  scrollBtn.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+</script>
 </body>
 </html>

@@ -1,10 +1,66 @@
-<% if (success && success.length) { %>
-    <div class="max-w-sm bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 px-4 py-2 mb-4 rounded-md">
-      <%= success %>
+<!-- ./views/partials/flashAlerts.ejs -->
+<style>
+  @keyframes toast-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes toast-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+  }
+
+  .toast {
+    animation: toast-slide-in 0.4s ease-out forwards;
+  }
+
+  .toast.hide {
+    animation: toast-fade-out 0.4s ease-in forwards;
+  }
+</style>
+
+<div id="toast-container" class="fixed top-6 right-6 z-50 space-y-3">
+  <% if (success && success.length) { %>
+    <div class="toast bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 px-4 py-3 rounded-md shadow-lg flex items-start justify-between space-x-4 max-w-sm">
+      <div class="flex items-start space-x-2">
+        <svg class="w-5 h-5 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        <span class="text-sm"><%= success %></span>
+      </div>
+      <button class="text-xl font-bold leading-none hover:opacity-60" onclick="this.parentElement.classList.add('hide'); setTimeout(() => this.parentElement.remove(), 400)">×</button>
     </div>
   <% } %>
+
   <% if (error && error.length) { %>
-    <div class="max-w-sm bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 px-4 py-2 mb-4 rounded-md">
-      <%= error %>
+    <div class="toast bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100 px-4 py-3 rounded-md shadow-lg flex items-start justify-between space-x-4 max-w-sm">
+      <div class="flex items-start space-x-2">
+        <svg class="w-5 h-5 mt-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        <span class="text-sm"><%= error %></span>
+      </div>
+      <button class="text-xl font-bold leading-none hover:opacity-60" onclick="this.parentElement.classList.add('hide'); setTimeout(() => this.parentElement.remove(), 400)">×</button>
     </div>
   <% } %>
+</div>
+
+<script>
+  setTimeout(() => {
+    document.querySelectorAll('.toast').forEach(el => {
+      el.classList.add('hide');
+      setTimeout(() => el.remove(), 400);
+    });
+  }, 5000);
+</script>

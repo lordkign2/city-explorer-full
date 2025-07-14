@@ -3,13 +3,87 @@
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
 
-<section class="max-w-2xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow">
+<section class="max-w-2xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow animate-fade-in">
   <h1 class="text-2xl font-bold mb-4 dark:text-white">Edit Country</h1>
-  <form action="/admin/countries/<%= country._id %>?_method=PUT" method="POST" class="space-y-4">
-    <input name="name" value="<%= country.name %>" class="form-input w-full" required />
-    <input name="code" value="<%= country.code %>" class="form-input w-full" required />
-    <button class="btn btn-primary w-full">Update Country</button>
+
+  <form action="/admin/countries/<%= country._id %>?_method=PUT" method="POST" class="space-y-4" id="editCountryForm">
+    <div>
+      <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country Name</label>
+      <input 
+        name="name" 
+        id="name"
+        value="<%= country.name %>" 
+        required 
+        class="form-input w-full rounded border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white" 
+      />
+      <p class="text-sm text-red-500 hidden" id="nameError">Name is required.</p>
+    </div>
+
+    <div>
+      <label for="code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Country Code</label>
+      <input 
+        name="code" 
+        id="code"
+        value="<%= country.code %>" 
+        required 
+        class="form-input w-full uppercase tracking-wide rounded border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+      />
+      <p class="text-sm text-red-500 hidden" id="codeError">Code is required.</p>
+    </div>
+
+    <button
+    type="submit"
+    class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md shadow-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:opacity-50"
+  >
+    <svg id="spinner" class="w-5 h-5 text-white animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+    </svg>
+    <span>Update Country</span>
+  </button>
+  
   </form>
 </section>
+
+<script>
+  document.getElementById('editCountryForm').addEventListener('submit', function (e) {
+    const name = document.getElementById('name');
+    const code = document.getElementById('code');
+    const spinner = document.getElementById('spinner');
+    let hasError = false;
+
+    if (!name.value.trim()) {
+      document.getElementById('nameError').classList.remove('hidden');
+      hasError = true;
+    } else {
+      document.getElementById('nameError').classList.add('hidden');
+    }
+
+    if (!code.value.trim()) {
+      document.getElementById('codeError').classList.remove('hidden');
+      hasError = true;
+    } else {
+      document.getElementById('codeError').classList.add('hidden');
+    }
+
+    if (hasError) {
+      e.preventDefault();
+      return;
+    }
+
+    spinner.classList.remove('hidden');
+    this.querySelector('button').disabled = true;
+  });
+</script>
+
+<style>
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out both;
+  }
+</style>
 
 <%- include('../partials/footer') %>

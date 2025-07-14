@@ -1,16 +1,75 @@
-<!-- ./views/pages/new-country.ejs -->
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
 <%- include('../partials/adminSidebar') %>
 
-<section class="max-w-2xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow">
-  <h1 class="text-2xl font-bold mb-4 dark:text-white">Add New Country</h1>
-  <form action="/admin/countries" method="POST" class="space-y-4">
-    <input name="name" placeholder="Country Name" required class="form-input w-full" />
-    <input name="code" placeholder="Country Code (e.g., US)" required class="form-input w-full" />
-    <button class="btn btn-primary w-full">Create Country</button>
+<section class="max-w-2xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Add New Country</h1>
+
+  <form id="new-country-form" action="/admin/countries" method="POST" class="space-y-5">
+    <!-- Country Name -->
+    <div>
+      <label for="name" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Country Name</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        placeholder="e.g., Nigeria"
+        required
+        class="form-input w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+     
+    </div>
+
+    <!-- Country Code -->
+    <div>
+      <label for="code" class="block mb-1 text-sm font-medium text-gray-700 dark:text-gray-300">Country Code</label>
+      <input
+        type="text"
+        name="code"
+        id="code"
+        placeholder="e.g., NG"
+        required
+        class="form-input w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+     
+    </div>
+
+    <!-- Submit -->
+    <button
+      type="submit"
+      class="w-full py-2 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition font-semibold shadow"
+    >
+    <span id="btn-text">Create Country</span>
+    <svg id="spinner" class="w-5 h-5 text-white animate-spin hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z">
+        </path>
+      </svg>
+    </button>
   </form>
 </section>
+
+<script>
+  document.getElementById('new-country-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name');
+    const code = document.getElementById('code');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btn-text');
+
+    let isValid = true;
+
+    if (isValid) {
+      // Show loading animation
+      spinner.classList.remove('hidden');
+      btnText.textContent = 'Creating...';
+      this.querySelector('button').disabled = true;
+      this.submit(); // Proceed to submit the form
+    }
+  });
+</script>
 
 <%- include('../partials/footer') %>

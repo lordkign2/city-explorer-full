@@ -1,14 +1,51 @@
-<aside class="w-64 bg-gray-800 text-white fixed  right-0 shadow-lg z-40 hidden lg-block">
-    <div class="text-xl p-6 font-bold border-gray-700">
-        <a href="/dashboard" class="hover:text-yellow-400 transition">Dashboard Panel</a>
-    </div>
-    <nav class="mt-4 space-y-2 px-6">
-        <a href="/" class="block py-2 px-3 rounded hover:bg-gray-700">Home page</a>
-        <a href="/cities" class="block py-2 px-3 rounded hover:bg-gray-700">Cities</a>
-        <a href="/countries" class="block py-2 px-3 rounded hover:bg-gray-700">Countries</a>
-        <a href="/dashboard/favorites" class="block py-2 px-3 rounded hover:bg-gray-700">Favorites</a>
-        <a href="/dashboard/trivia" class="block py-2 px-3 rounded hover:bg-gray-700">Trivia</a>
-        <a href="/dashboard/settings" class="block py-2 px-3 rounded hover:bg-gray-700">Settings</a>
-        <a href="/logout" class="block py-2 px-3 rounded hover:bg-gray-700 text-red-400">Logout</a>
-    </nav>
+<!-- ./views/partials/sidebar.ejs -->
+
+<!-- Overlay (dark background) -->
+<div id="sidebarOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden lg:hidden transition-opacity duration-300"></div>
+
+<!-- Sidebar (left side) -->
+<aside id="sidebar"
+  class="w-64 h-screen fixed top-0 left-0 bg-gray-900 text-white shadow-lg z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+
+  <!-- Header with Close Button -->
+  <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+    <span class="text-lg font-semibold">Dashboard</span>
+    <!-- Close button for mobile -->
+    <button id="closeSidebar" class="text-white text-2xl font-bold hover:text-red-400 lg:hidden">&times;</button>
+  </div>
+
+  <!-- Navigation Links -->
+  <nav class="mt-4 space-y-2 px-6">
+    <a href="/" class="block py-2 px-3 rounded hover:bg-gray-700">🏠 Home</a>
+    <a href="/cities" class="block py-2 px-3 rounded hover:bg-gray-700">🌆 Cities</a>
+    <a href="/countries" class="block py-2 px-3 rounded hover:bg-gray-700">🌍 Countries</a>
+    <a href="/dashboard/favorites" class="block py-2 px-3 rounded hover:bg-gray-700">❤️ Favorites</a>
+    <a href="/dashboard/trivia" class="block py-2 px-3 rounded hover:bg-gray-700">🧠 Trivia</a>
+    <a href="/dashboard/settings" class="block py-2 px-3 rounded hover:bg-gray-700">⚙️ Settings</a>
+    <a href="/auth/logout" class="block py-2 px-3 rounded hover:bg-gray-700 text-red-400">🚪 Logout</a>
+  </nav>
 </aside>
+
+<!-- Sidebar Script -->
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const toggleBtn = document.getElementById('toggleSidebar');
+  const closeBtn = document.getElementById('closeSidebar');
+
+  const openSidebar = () => {
+    sidebar.classList.remove('-translate-x-full');
+    overlay.classList.remove('hidden');
+    overlay.classList.add('opacity-100');
+  };
+
+  const closeSidebar = () => {
+    sidebar.classList.add('-translate-x-full');
+    overlay.classList.add('hidden');
+    overlay.classList.remove('opacity-100');
+  };
+
+  if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
+  if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+  if (overlay) overlay.addEventListener('click', closeSidebar);
+</script>

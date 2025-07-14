@@ -7,6 +7,7 @@ const {cache} = require("../middleware/cache");
 const City = require('../models/City');
 const redisClient = require('../redisClient');
 const fetchSchools = require('../utils/schools');
+const Country = require('../models/Country');
 
 // GET: Landing page with trending cities
 router.get('/', async (req, res) => {
@@ -21,8 +22,19 @@ router.get('/', async (req, res) => {
       await redisClient.set('trending_cities', JSON.stringify(trendingCities), { EX: 3600 }); // 1 hour
     }
 
+    countries = await Country.find().sort({ views: -1 }).limit(6).lean();
+    
+    console.log(countries._id);
+    // let countries = [];
+    // trendingCities.forEach( city => {
+    //   countries.push(city.country)
+      
+    // });
+   
+    
     res.render('pages/landing', {
       trendingCities,
+      countries,
       user: req.user
     });
   } catch (err) {

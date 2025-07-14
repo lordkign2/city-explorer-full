@@ -1,58 +1,83 @@
-<!-- ./views/pages/city.ejs -->
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
 
-<section class="max-w-5xl mx-auto mt-8 p-6 bg-white dark:bg-gray-900 rounded-lg shadow">
-  
-  <h1 class="text-4xl font-bold mb-4 text-gray-800 dark:text-white"><%= city.name %>, <%= city.countryName %></h1>
+<section class="max-w-5xl mx-auto mt-10 p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
+  <!-- City Name -->
+  <h1 class="text-4xl font-bold mb-6 text-gray-800 dark:text-white text-center">
+    <%= city.name %>, <%= city.countryName %>
+  </h1>
 
-  <!-- Background Image -->
-  <div class="mb-6">
-    <img src="<%= city.imageUrl %>" alt="<%= city.name %> image" class="w-full rounded-lg shadow" />
+  <!-- Hero Image -->
+  <div class="mb-8">
+    <img src="<%= city.imageUrl %>" alt="<%= city.name %> image"
+      class="w-full rounded-lg object-cover h-64 shadow" />
   </div>
 
-  <!-- Weather -->
-  <div class="mb-4">
-    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Current Weather</h2>
+  <!-- Weather Section -->
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">🌤 Current Weather</h2>
     <% if (weather) { %>
-      <p class="text-gray-800 dark:text-gray-300">
-        🌤 <%= weather.temperature %>°C — <%= weather.description %>
-      </p>
-      <p class="text-gray-800 dark:text-gray-300">
-        <%= weather.wind %>mPh 
-      </p>
+      <div class="text-gray-800 dark:text-gray-300 space-y-1">
+        <p><%= weather.temperature %>°C — <%= weather.description %></p>
+        <p>Wind Speed: <%= weather.wind %> mPh</p>
+      </div>
     <% } else { %>
       <p class="text-red-500">Weather info unavailable</p>
     <% } %>
   </div>
 
-  <!-- Hotels -->
-  <!-- <div class="mb-6">
-    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Popular Hotels</h2>
-    <%// hotels.forEach(hotel => { %>
-      <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-2 shadow">
-        <p class="text-lg font-semibold text-gray-800 dark:text-white"><%=// hotel.name %></p>
-        <p class="text-sm text-gray-600 dark:text-gray-400"><%=// hotel.address %></p>
-      </div>
-    <%// }) %>
-  </div>  -->
+  <!-- Photo Carousel -->
+<!-- <div class="mb-8">
+  <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">📷 City Gallery</h2>
+  <div class="swiper mySwiper rounded-lg overflow-hidden shadow">
+    <div class="swiper-wrapper">
+      <% //city.photos.forEach(photo => { %>
+        <div class="swiper-slide">
+          <img src="<%=// photo %>" alt="City photo" class="w-full h-64 object-cover">
+        </div>
+      <%// }) %>
+    </div>
+    <div class="swiper-pagination"></div>
+  </div>
+</div> -->
+
+<!-- SwiperJS CDN -->
+<!-- <link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+  const swiper = new Swiper(".mySwiper", {
+    loop: true,
+    pagination: {
+      el: ".swiper-pagination",
+    },
+    autoplay: {
+      delay: 3500,
+    },
+  });
+</script> -->
+
 
   <!-- Schools -->
-  <div class="mb-6">
-    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Educational Institutions</h2>
-    <% schools.forEach(school => { %>
-      <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-2 shadow">
-        <p class="text-lg font-semibold text-gray-800 dark:text-white"><%= schools.mockSchools %></p>
-        <p class="text-sm text-gray-600 dark:text-gray-400"><%= schools.mockSchools %></p>
-      </div>
-    <% }) %>
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">🎓 Educational Institutions</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <% schools.forEach(school => { %>
+        <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
+          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%= school.name %></p>
+          <p class="text-sm text-gray-600 dark:text-gray-400"><%= school.address %></p>
+        </div>
+      <% }) %>
+    </div>
   </div>
 
   <!-- Fun Facts -->
-  <div class="mb-6">
-    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Fun Facts</h2>
-    <ul class="list-disc pl-6 text-gray-700 dark:text-gray-300">
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">✨ Fun Facts</h2>
+    <ul class="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-1">
       <% city.funFacts.forEach(fact => { %>
         <li><%= fact %></li>
       <% }) %>
@@ -60,17 +85,18 @@
   </div>
 
   <!-- Map -->
-  <div id="map" class="h-64 rounded mb-6 shadow">
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">🗺️ Map</h2>
+    <div id="map" class="w-full h-64 rounded-lg shadow"></div>
     <script>
-      const map = L.map('map').setView (['<%= city.lat %>', '<%= city.lng %>'], 12); 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
-      L.marker(['<%= city.lat %>', '<%= city.lng %>']).addTo(map).bindPopup('<%= city.name %>').openPopup(); 
+      const map = L.map('map').setView([<%= city.lat %>, <%= city.lng %>], 12);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+      L.marker([<%= city.lat %>, <%= city.lng %>]).addTo(map).bindPopup('<%= city.name %>').openPopup();
     </script>
- 
   </div>
-  <!-- Trivia & Chat Sections -->
- 
-  <%- include('../partials/chat', {cityId, messages, user}) %>
+
+  <!-- Chat -->
+  <%- include('../partials/chat', { cityId, messages, user }) %>
 </section>
 
 <%- include('../partials/footer') %>

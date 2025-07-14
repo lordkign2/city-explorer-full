@@ -2,15 +2,18 @@
 // controllers/adminController.js
 const City = require('../models/City');
 const Country = require('../models/Country');
+const User = require('../models/User');
 
 // Admin dashboard homepage
 exports.getAdminDashboard = async (req, res) => {
   try {
     const cityCount = await City.countDocuments();
+    const userCount = await City.countDocuments();
     const countryCount = await Country.countDocuments();
     res.render('pages/admin', {
       title: 'Admin Dashboard',
       cityCount,
+      userCount,
       countryCount
     });
   } catch (err) {
@@ -23,8 +26,36 @@ exports.getAdminDashboard = async (req, res) => {
 //        CITIES CRUD
 // ==========================
 exports.getAllCities = async (req, res) => {
-  const cities = await City.find().populate('country');
-  res.render('pages/admin-cities', { title: 'Manage Cities', cities });
+  try {
+  const { page = 1, limit = 10, sort = 'name', order = 'asc', search = '' } = req.query;
+    const query = search
+      ? { name: { $regex: new RegExp(search, 'i') } }
+      : {};
+
+    const sortOption = { [sort]: order === 'asc' ? 1 : -1 };
+
+    const total = await City.countDocuments(query);
+    const cities = await City.find(query)
+      .populate('country')
+      .sort(sortOption)
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
+      const allCountries = await Country.find();
+  res.render('pages/admin-cities', { 
+    title: 'Manage Cities',
+    allCountries,
+    cities,
+    currentPage: parseInt(page),
+    totalPages: Math.ceil(total / limit),
+    sort,
+    order,
+    search
+  });
+} catch (err) {
+  console.error(err);
+  req.flash('error', 'Error fetching cities');
+  res.redirect('/admin');
+}
 };
 
 exports.showNewCityForm = async (req, res) => {
@@ -87,12 +118,50 @@ exports.deleteCity = async (req, res) => {
   }
 };
 
+exports.bulkDeleteCities = async (req, res) => {
+  const ids = req.body.ids;
+  try {
+  // If no checkbox was selected
+  if (!ids || (Array.isArray(ids) && ids.length === 0)) {
+    req.flash('error', 'No cities selected for deletion.');
+    return res.redirect('/admin/cities');
+  }
+  
+    // If only one checkbox was selected, make sure it's an array
+    const idArray = Array.isArray(ids) ? ids : [ids];
+
+    await City.deleteMany({ _id: { $in: idArray } });
+
+    req.flash('success', 'Selected cities deleted.');
+    res.redirect('/admin/cities');
+  } catch (err) {
+    console.error(err);
+    req.flash('error', 'Error deleting selected cities.');
+    res.redirect('/admin/cities');
+  }
+};
+
+
+
 // ==========================
 //       COUNTRIES CRUD
 // ==========================
 exports.getAllCountries = async (req, res) => {
-  const countries = await Country.find();
-  res.render('pages/admin-countries', { title: 'Manage Countries', countries });
+  const perPage = 10;
+  const page = parseInt(req.query.page) || 1;
+  const countries = await Country.find()
+  .skip((page - 1) * perPage)
+  .limit(perPage)
+  .sort({ name: 1 });
+  const totalCountries = await Country.countDocuments();
+  
+    
+  res.render('pages/admin-countries', { 
+    title: 'Manage Countries', 
+    countries,  
+    currentPage: page,
+    totalPages: Math.ceil(totalCountries / perPage) 
+  });
 };
 
 exports.showNewCountryForm = (req, res) => {

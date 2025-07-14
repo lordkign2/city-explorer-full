@@ -1,3 +1,4 @@
+<!-- ./views/pages/country.ejs -->
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
@@ -17,11 +18,20 @@
   <!-- Country Map -->
   <% if (country.latlng) { %>
     <div id="map" class="h-64 rounded mb-6 shadow"></div>
-   
-    <% const map = L.map('map').setView([<%= country.latlng[0] %>, <%= country.latlng[1] %>], 5); %>
-    <% L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); %>
-    <% L.marker([<%= country.latlng[0] %>, <%= country.latlng[1] %>]).addTo(map).bindPopup('<%= country.name %>').openPopup(); %>
-    
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const map = L.map('map').setView([<%= country.latlng[0] %>, <%= country.latlng[1] %>], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 18,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        L.marker([<%= country.latlng[0] %>, <%= country.latlng[1] %>])
+          .addTo(map)
+          .bindPopup('<%= country.name %>')
+          .openPopup();
+      });
+    </script>
   <% } %>
 
   <!-- Cities in Country -->

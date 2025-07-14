@@ -1,99 +1,112 @@
-<section class="mt-10">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Live City Chat</h2>
-  
-    <div id="chat-box" class="bg-gray-100 dark:bg-gray-800 p-4 h-64 overflow-y-scroll rounded shadow mb-4">
-      <ul id="messages" class="space-y-2">
-        <% messages.forEach(function(message) { %>
-          <li class="flex items-start space-x-3">
-            <img src="<%= message.senderAvatar %>" class="w-8 h-8 rounded-full" />
-            <div>
-              <p class="text-sm text-gray-700 dark:text-gray-300">
-                <strong><%= message.senderName %></strong>
-                <span class="text-xs text-gray-500 ml-2">
-                  <%= new Date(message.timestamp).toLocaleTimeString() %>
-                </span>
-              </p>
-              <p class="text-gray-800 dark:text-gray-200"><%= message.content %></p>
-            </div>
-          </li>
-        <% }) %>
-      </ul>
-      <p id="typing-status" class="text-sm text-gray-500 dark:text-gray-400 italic"></p>
-    </div>
-  
-    <form id="chat-form" class="flex items-center space-x-2">
-      <input type="text" id="chat-input" placeholder="Type a message..." class="flex-grow form-input dark:bg-gray-700" required autocomplete="off" />
-      <button type="submit"  class="btn btn-primary">Send</button>
-    </form>
-  </section>
-  <!-- const room = '< city._id %>'; -->
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-  window.addEventListener('DOMContentLoaded', () => {
-    const socket = io();
-    
-   
-    const room = '<%= cityId %>';
-    console.log("Joining room:", room);
-    const userName = "<%= user.username %>";
-    const avatarUrl = "<%= user.avatarUrl %>";
-  
-    socket.emit('joinRoom', room);
-  
-    const chatForm = document.getElementById('chat-form');
-    const chatBox = document.getElementById('chat-box');
-    const chatInput = document.getElementById('chat-input');
-    const messages = document.getElementById('messages');
-    const typingStatus = document.getElementById('typing-status');
-    
-    chatBox.scrollTop = chatBox.scrollHeight;
-   
-  
-    chatInput.addEventListener('input', () => {
-      socket.emit('typing', room);
-    });
-  
-    chatForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      console.log("Prevented form reload");
-      const msg = chatInput.value;
-      if (msg) {
-        socket.emit('chatMessage', { room, userName, avatarUrl, text: msg });
-        chatInput.value = '';
-      }
-    });
-  
-    socket.on('chatMessage', (data) => {
-      console.log("received chat message:", data)
-      const li = document.createElement('li');
-      li.className = 'flex items-start space-x-3';
-      li.innerHTML = `
-        <img src="${data.senderAvatar}" class="w-8 h-8 rounded-full" />
-        <div>
-          <p class="text-sm text-gray-700 dark:text-gray-300">
-            <strong>${data.senderName}</strong>
-            <span class="text-xs text-gray-500 ml-2">${new Date(data.timestamp).toLocaleTimeString()}</span>
-          </p>
-          <p class="text-gray-800 dark:text-gray-200">${data.content}</p>
-        </div>
-      `;
-      messages.appendChild(li);
-      chatBox.scrollTop = chatBox.scrollHeight;
-      typingStatus.textContent = '';
-    });
-  
-    socket.on('typing', () => {
-      typingStatus.textContent = 'Someone is typing...';
-      setTimeout(() => {
-        typingStatus.textContent = '';
-      }, 2000);
-    });
+<section class="mt-12">
+  <h2 class="text-2xl font-extrabold mb-4 text-gray-800 dark:text-white" data-aos="fade-up">
+    Live City Chat
+  </h2>
 
-    //error lgging/handling
+  <!-- Chat Messages -->
+  <div id="chat-box" class="bg-gray-100 dark:bg-gray-800 p-4 h-[22rem] overflow-y-auto rounded-xl shadow-md mb-4">
+    <ul id="messages" class="space-y-4">
+      <% messages.forEach(function(message) { %>
+        <li class="flex items-start space-x-3">
+          <img src="<%= message.senderAvatar %>" alt="avatar" class="w-8 h-8 rounded-full" />
+          <div>
+            <p class="text-sm text-gray-700 dark:text-gray-300">
+              <strong><%= message.senderName %></strong>
+              <span class="text-xs text-gray-500 ml-2">
+                <%= new Date(message.timestamp).toLocaleTimeString() %>
+              </span>
+            </p>
+            <p class="text-gray-800 dark:text-gray-100 text-sm mt-1"><%= message.content %></p>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+    <p id="typing-status" class="text-sm text-indigo-600 dark:text-indigo-400 italic mt-2"></p>
+  </div>
+
+  <!-- Chat Input -->
+  <form id="chat-form" class="flex items-center gap-3">
+    <input
+      type="text"
+      id="chat-input"
+      placeholder="Type a message..."
+      class="flex-grow px-4 py-2 rounded-full bg-white dark:bg-gray-700 border border-gray-300 
+             dark:border-gray-600 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 
+             focus:ring-indigo-500 dark:focus:ring-indigo-400 transition"
+      required
+      autocomplete="off"
+    />
+    <button
+      type="submit"
+      class="px-5 py-2 rounded-full bg-gradient-to-r from-blue-700 to-indigo-600 text-white text-sm font-medium 
+             shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
+    >
+      Send
+    </button>
+  </form>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const socket = io();
+  const room = '<%= cityId %>';
+  const userName = "<%= user.username %>";
+  const avatarUrl = "<%= user.avatarUrl %>";
+
+  socket.emit('joinRoom', room);
+
+  const chatForm = document.getElementById('chat-form');
+  const chatBox = document.getElementById('chat-box');
+  const chatInput = document.getElementById('chat-input');
+  const messages = document.getElementById('messages');
+  const typingStatus = document.getElementById('typing-status');
+
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  chatInput.addEventListener('input', () => {
+    socket.emit('typing', room);
+  });
+
+  chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const msg = chatInput.value.trim();
+    if (msg) {
+      socket.emit('chatMessage', { room, userName, avatarUrl, text: msg });
+      chatInput.value = '';
+    }
+  });
+
+  socket.on('chatMessage', (data) => {
+    const li = document.createElement('li');
+    li.className = 'flex items-start space-x-3';
+    li.innerHTML = `
+      <img src="${data.senderAvatar}" class="w-8 h-8 rounded-full" />
+      <div>
+        <p class="text-sm text-gray-700 dark:text-gray-300">
+          <strong>${data.senderName}</strong>
+          <span class="text-xs text-gray-500 ml-2">${new Date(data.timestamp).toLocaleTimeString()}</span>
+        </p>
+        <p class="text-gray-800 dark:text-gray-100 text-sm mt-1">${data.content}</p>
+      </div>
+    `;
+    messages.appendChild(li);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    typingStatus.textContent = '';
+  });
+
+  socket.on('typing', () => {
+    typingStatus.textContent = 'Someone is typing...';
+    setTimeout(() => {
+      typingStatus.textContent = '';
+    }, 2000);
+  });
+
+  // Optional safety (mostly used in Node server context)
+  if (typeof process !== 'undefined') {
     process.on("unhandledRejection", (reason) => {
       console.error("Unhandled promise rejection:", reason);
-    })
-
-   
-  });
-  </script>
+    });
+  }
+});
+</script>

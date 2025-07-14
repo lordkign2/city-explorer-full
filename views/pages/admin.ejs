@@ -4,16 +4,26 @@
 <%- include('../partials/flashMessages') %>
 <%- include('../partials/adminSidebar') %>
 
-<section class="max-w-5xl mx-auto p-6 dark:bg-gray-900 bg-white rounded-xl shadow-xl mt-6">
-  <h1 class="text-3xl font-bold mb-4 text-gray-800 dark:text-white">Admin Dashboard</h1>
-  <div class="grid grid-cols-2 gap-6 text-center">
-    <div class="p-6 bg-blue-100 dark:bg-blue-900 rounded-lg shadow">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Total Cities</h2>
+<section class="max-w-6xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-xl shadow-xl" data-aos="fade-up">
+  <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white text-center">Admin Dashboard</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Total Cities -->
+    <div class="p-6 bg-blue-100 dark:bg-blue-900 rounded-lg shadow" data-aos="zoom-in">
+      <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Cities</h2>
       <p class="text-4xl font-bold text-blue-700 dark:text-blue-300"><%= cityCount %></p>
     </div>
-    <div class="p-6 bg-green-100 dark:bg-green-900 rounded-lg shadow">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Total Countries</h2>
+
+    <!-- Total Countries -->
+    <div class="p-6 bg-green-100 dark:bg-green-900 rounded-lg shadow" data-aos="zoom-in" data-aos-delay="100">
+      <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Countries</h2>
       <p class="text-4xl font-bold text-green-700 dark:text-green-300"><%= countryCount %></p>
+    </div>
+
+    <!-- Total Users -->
+    <div class="p-6 bg-purple-100 dark:bg-purple-900 rounded-lg shadow" data-aos="zoom-in" data-aos-delay="200">
+      <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Users</h2>
+      <p class="text-4xl font-bold text-purple-700 dark:text-purple-300"><%= userCount %></p>
     </div>
   </div>
 </section>

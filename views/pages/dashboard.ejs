@@ -1,47 +1,48 @@
-<!-- ./views/pages/dashboard.ejs -->
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
 <%- include('../partials/sidebar') %>
 
-<section class="max-w-4xl mx-auto p-6 mt-6 bg-white dark:bg-gray-900 rounded-lg shadow">
-  <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
+<section class="max-w-5xl mx-auto mt-10 px-6 sm:px-8 py-8 bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+  <h1 class="text-3xl font-extrabold mb-8 text-gray-800 dark:text-white" data-aos="fade-down">
     Welcome, <%= user.username %>!
   </h1>
 
-  <!-- User Avatar and Email -->
-  <div class="flex items-center space-x-4 mb-6">
-    <img src="<%= user.avatarUrl %>" alt="avatar" class="w-16 h-16 rounded-full border-2 border-indigo-500" />
+  <!-- User Profile -->
+  <div class="flex items-center space-x-6 mb-10" data-aos="fade-up">
+    <img src="<%= user.avatarUrl %>" alt="User avatar" class="w-20 h-20 rounded-full border-4 border-indigo-500 shadow" />
     <div>
       <p class="text-lg text-gray-700 dark:text-gray-300"><strong>Email:</strong> <%= user.email %></p>
-      <a href="/dashboard/settings" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline">Update Profile</a>
+      <a href="/dashboard/settings" class="text-sm text-indigo-600 dark:text-indigo-400 hover:underline mt-1 inline-block">Update Profile</a>
     </div>
   </div>
 
   <!-- Favorite Cities -->
-  <div class="mb-8">
-    <h2 class="text-2xl font-semibold mb-3 text-gray-800 dark:text-white">Favorite Cities</h2>
+  <div class="mb-10" data-aos="fade-up">
+    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Favorite Cities</h2>
     <% if (user.favorites.length === 0) { %>
-      <p class="text-gray-600 dark:text-gray-400">You haven't added any favorite cities yet.</p>
+      <p class="text-gray-600 dark:text-gray-400 italic">You haven't added any favorite cities yet.</p>
     <% } else { %>
-      <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <% user.favorites.forEach(city => { %>
-          <li class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md">
-            <h3 class="text-lg font-semibold"><%= city.name %>, <%= city.country %></h3>
-            <a href="/cities/<%= city._id %>" class="text-indigo-600 dark:text-indigo-400 hover:underline text-sm">View City</a>
+          <li class="bg-gray-100 dark:bg-gray-800 p-5 rounded-xl shadow hover:shadow-lg transition-transform hover:-translate-y-1">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-1">
+              <%= city.name %>, <%= city.country %>
+            </h3>
+            <a href="/cities/<%= city._id %>" class="text-indigo-600 dark:text-indigo-400 text-sm hover:underline">View City</a>
           </li>
         <% }) %>
       </ul>
     <% } %>
   </div>
 
-  <!-- Trivia History (Optional Feature) -->
+  <!-- Trivia History -->
   <% if (user.triviaScores && user.triviaScores.length > 0) { %>
-    <div>
-      <h2 class="text-2xl font-semibold mb-3 text-gray-800 dark:text-white">Trivia History</h2>
-      <ul class="space-y-2">
+    <div data-aos="fade-up">
+      <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Trivia History</h2>
+      <ul class="space-y-4">
         <% user.triviaScores.forEach(score => { %>
-          <li class="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-md shadow">
+          <li class="bg-yellow-100 dark:bg-yellow-900 p-4 rounded-lg shadow-md">
             <p class="text-gray-800 dark:text-yellow-200">
               <strong><%= score.cityName %></strong> — <%= score.correct %> correct out of <%= score.total %> questions
             </p>
@@ -53,3 +54,7 @@
 </section>
 
 <%- include('../partials/footer') %>
+
+<!-- AOS Init -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+<script>AOS.init();</script>
