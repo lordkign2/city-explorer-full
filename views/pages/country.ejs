@@ -2,12 +2,32 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
+<%- include('../partials/sidebar') %>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha512-sA+HxN1bV1EkfTY1K/UHn0PS+n0E9rPLwRaAYPFUJv87EYfYZU2pLQ1jBr69F9sFVq5UPw5P+glwGjjSp6z1hQ=="
+  crossorigin=""
+/>
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha512-o8gQd9gFhEhMggzFEblhEwK/pzrw+cEK3qH08HEw2sMwqKqKYBpO0bBrUzYwbK1NIKwfIOzFf9W0M0G27HCZAA=="
+  crossorigin=""
+></script>
+
 
 <section class="max-w-5xl mx-auto mt-8 p-6 bg-white dark:bg-gray-900 rounded-lg shadow">
+  <div class="flex items-center gap-2 mb-2">
+    <img
+      src="https://flagcdn.com/24x18/<%= country.code.toLowerCase() %>.png"
+      alt="<%= country.name %> flag"
+      class="inline-block w-5 h-3 rounded"
+    />
   <h1 class="text-4xl font-bold mb-4 text-gray-800 dark:text-white"><%= country.name %></h1>
-
+  </div>
   <!-- Country Info -->
   <div class="mb-6">
+    
     <p class="text-lg text-gray-700 dark:text-gray-300"><strong>Code:</strong> <%= country.code %></p>
     <p class="text-lg text-gray-700 dark:text-gray-300"><strong>Region:</strong> <%= country.region || 'N/A' %></p>
     <p class="text-lg text-gray-700 dark:text-gray-300"><strong>Population:</strong> <%= country.population?.toLocaleString() || 'N/A' %></p>
@@ -16,23 +36,48 @@
   </div>
 
   <!-- Country Map -->
-  <% if (country.latlng) { %>
+  
     <div id="map" class="h-64 rounded mb-6 shadow"></div>
+<!-- Leaflet CSS -->
+
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const map = L.map('map').setView([<%= country.latlng[0] %>, <%= country.latlng[1] %>], 5);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 18,
-          attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        L.marker([<%= country.latlng[0] %>, <%= country.latlng[1] %>])
-          .addTo(map)
-          .bindPopup('<%= country.name %>')
-          .openPopup();
+      document.addEventListener('DOMContentLoaded', async () => {
+        const countryName = "<%= country.name %>";
+        const apiKey = "074065632fec49cf8ea28486935077c7";
+    
+        try {
+          const res = await fetch(
+            `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+              countryName
+            )}&key=${apiKey}&limit=1`
+          );
+          const data = await res.json();
+          
+          if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry;
+    
+            const map = L.map("map").setView([lat, lng], 5);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              maxZoom: 18,
+              attribution: '&copy; OpenStreetMap contributors',
+            }).addTo(map);
+    
+            L.marker([lat, lng])
+              .addTo(map)
+              .bindPopup(countryName)
+              .openPopup();
+          } else {
+            alert("Could not find location for this country.");
+          }
+        } catch (error) {
+          console.error("Geocoding failed:", error);
+          alert("Something went wrong while fetching the map.");
+        }
       });
     </script>
-  <% } %>
+    
+
 
   <!-- Cities in Country -->
   <div>

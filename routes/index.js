@@ -7,31 +7,31 @@ const {cache} = require("../middleware/cache");
 const City = require('../models/City');
 const redisClient = require('../redisClient');
 const fetchSchools = require('../utils/schools');
+const fetchHotels = require('../utils/hotels');
 const Country = require('../models/Country');
 
 // GET: Landing page with trending cities
 router.get('/', async (req, res) => {
   try {
-    // Try Redis cache
-    let trendingCities = await redisClient.get('trending_cities');
-    if (trendingCities) {
-      trendingCities = JSON.parse(trendingCities);
+    await redisClient.del('trending_cities');
+
+    let trendingCitiesCache = await redisClient.get('trending_cities');
+    let trendingCities;
+
+    if (trendingCitiesCache) {
+      trendingCities = JSON.parse(trendingCitiesCache);
     } else {
-      // Fetch from DB and cache in Redis
-      trendingCities = await City.find().sort({ views: -1 }).limit(6).lean();
-      await redisClient.set('trending_cities', JSON.stringify(trendingCities), { EX: 3600 }); // 1 hour
+      trendingCities = await City.find()
+        .sort({ viewCount: -1 })
+        .limit(6)
+        .populate('country')
+        .lean();
+
+      await redisClient.set('trending_cities', JSON.stringify(trendingCities), { EX: 3600 });
     }
 
-    countries = await Country.find().sort({ views: -1 }).limit(6).lean();
-    
-    console.log(countries._id);
-    // let countries = [];
-    // trendingCities.forEach( city => {
-    //   countries.push(city.country)
-      
-    // });
-   
-    
+    const countries = await Country.find().limit(3);
+
     res.render('pages/landing', {
       trendingCities,
       countries,
@@ -40,20 +40,36 @@ router.get('/', async (req, res) => {
   } catch (err) {
     console.error('Error loading landing page:', err);
     req.flash('error', 'Unable to load trending cities.');
-    res.render('pages/landing', { trendingCities: [], user: req.user });
+    res.render('pages/landing', { trendingCities: [], countries: [], user: req.user });
   }
 });
+
 
 // GETA: free city search (general city)
 router.post('/searchcity', async (req, res) => {
   var searchCity = req.body.searchCity
-  var searchURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&units=metric&appid=ae01b42d69cbfa8f4dd0f6b61427222b";
+  var apikey = process.env.WEATHER_API_KEY
+  var searchURL = "https://api.openweathermap.org/data/2.5/weather?q=" + searchCity + "&units=metric&appid=" + apikey;
   try {
     var response = await axios.get(searchURL);
     var data = response.data;
     var city = data.name;
     var schools = await fetchSchools(city);
-    console.log(schools)
+
+    const allHotels = await fetchHotels(city);
+    const search = req.query.search?.toLowerCase() || "";
+    const maxPrice = req.query.maxPrice || Infinity;
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 8;
+    const filteredHotels = allHotels.filter(h =>
+      h.hotelName.toLowerCase().includes(search) &&
+      parseFloat(h.price.replace(/[^\d.]/g, '')) <= maxPrice
+    ); 
+    const paginatedHotels = filteredHotels.slice((page - 1) * perPage, page * perPage);
+    
+    // map api key
+    const apiKey = process.env.OPENCAGE_API_KEY;
+
     res.render("pages/search-city", {
       weather: {
         city: data.name,
@@ -65,6 +81,11 @@ router.post('/searchcity', async (req, res) => {
       },
       city,
       schools,
+      hotels: paginatedHotels,
+      currentPage: page,
+      totalPages: Math.ceil(filteredHotels.length / perPage),
+      query: req.query,
+      apiKey
     });
 
   } catch (err) {
@@ -73,5 +94,6 @@ router.post('/searchcity', async (req, res) => {
     res.redirect('/');
   }
 })
+
 
 module.exports = router;

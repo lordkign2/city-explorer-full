@@ -20,16 +20,16 @@
   <!-- Favorite Cities -->
   <div class="mb-10" data-aos="fade-up">
     <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Favorite Cities</h2>
-    <% if (user.favorites.length === 0) { %>
+    <% if (cities.length === 0) { %>
       <p class="text-gray-600 dark:text-gray-400 italic">You haven't added any favorite cities yet.</p>
     <% } else { %>
       <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <% user.favorites.forEach(city => { %>
+        <% cities.forEach(city => { %>
           <li class="bg-gray-100 dark:bg-gray-800 p-5 rounded-xl shadow hover:shadow-lg transition-transform hover:-translate-y-1">
             <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-1">
-              <%= city.name %>, <%= city.country %>
+              <%= city.favoriteCity %>, <%= city.cityCountry %>
             </h3>
-            <a href="/cities/<%= city._id %>" class="text-indigo-600 dark:text-indigo-400 text-sm hover:underline">View City</a>
+            <a href="/cities/<%= city.cityId %>" class="text-indigo-600 dark:text-indigo-400 text-sm hover:underline">View City</a>
           </li>
         <% }) %>
       </ul>

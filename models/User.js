@@ -28,12 +28,7 @@ const userSchema = new mongoose.Schema({
     default: false
   
   },
-  favorites: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'City'
-    }
-  ],
+  favorites: [{type: String}],
   triviaScores: [
     {
       cityId: {
@@ -44,7 +39,15 @@ const userSchema = new mongoose.Schema({
       correct: Number,
       total: Number
     }
-  ]
+  ],
+  suspendedUntil: {
+    type: Date,
+    default: null
+  },
+  suspensionReason: {
+    type: String,
+    default: ''
+  }
 });
 
 // Hash password before saving

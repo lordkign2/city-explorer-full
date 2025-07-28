@@ -4,6 +4,7 @@ const router = express.Router();
 const countryController = require('../controllers/countryController');
 const { loginRequired } = require('../middleware/auth');
 
+router.get('/', countryController.getAllCountries);
 // GET: View a single country and its cities
 router.get('/:id', loginRequired, countryController.getCountryById);
 

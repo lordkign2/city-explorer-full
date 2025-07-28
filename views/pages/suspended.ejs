@@ -1,0 +1,14 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar') %>
+<%- include('../partials/flashMessages') %>
+
+<div class="min-h-screen flex items-center justify-center bg-red-50 dark:bg-gray-900 text-center px-6">
+  <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow max-w-md w-full">
+    <h2 class="text-2xl font-bold text-red-600 mb-4">Account Suspended</h2>
+    <p class="text-gray-700 dark:text-gray-300 mb-6">You have been Suspended until: <%= until %></p>
+    <p class="text-gray-600 dark:text-gray-200 mb-6">Reason: "<%= reason%>"</p>
+    <a href="/auth/logout" class="inline-block bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">Logout</a>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

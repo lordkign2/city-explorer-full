@@ -1,0 +1,132 @@
+<% /* Hotel Cards Partial - Accepts hotels[], currentPage, totalPages, filters */ %>
+<h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">Hotels</h2>
+<!-- Search + Filter Bar -->
+<div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+    <input id="searchInput" type="text" placeholder="Search by hotel name..." class="w-full md:w-1/2 px-4 py-2 border rounded shadow-sm focus:outline-none focus:ring">
+    
+    <select id="priceFilter" class="w-full md:w-1/4 px-4 py-2 border rounded shadow-sm">
+      <option value="all">All Prices</option>
+      <option value="0-100">₦0 – ₦100</option>
+      <option value="100-200">₦100 – ₦200</option>
+      <option value="200-500">₦200 – ₦500</option>
+      <option value="500">₦500+</option>
+    </select>
+  </div>
+  
+  <!-- Hotel Grid -->
+  <div id="hotelGrid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% if (hotels && hotels.length > 0) { %>
+      <% hotels.forEach((hotel, index) => { %>
+        <div class="hotel-card bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden transition hover:scale-105 duration-300">
+          <img src="<%= hotel.firstPhotoUrlA %>" alt="<%= hotel.firstPhotoDescriptionA %>" class="w-full h-48 object-cover">
+  
+          <div class="p-4">
+            <h2 class="text-xl font-semibold mb-1 hotel-name"><%= hotel.hotelName %></h2>
+            <p class="text-gray-500 dark:text-gray-300 text-sm mb-2"><%= hotel.description %></p>
+            <div class="text-yellow-500 font-bold"><%= hotel.rating %> — <%= hotel.ratingSummary %></div>
+            <div class="text-lg mt-2 font-semibold hotel-price">₦<%= hotel.price %></div>
+  
+            <button 
+              class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              onclick="openModal(<%= index %>)">
+              View Photos
+            </button>
+          </div>
+        </div>
+      <% }) %>
+    <% } else { %>
+      <div class="col-span-full text-center text-gray-500 dark:text-gray-300">
+        No hotels found matching your criteria.
+      </div>
+    <% } %>
+  </div>
+  
+  <!-- Pagination -->
+  <div class="flex justify-center items-center gap-4 mt-8">
+    <% if (currentPage > 1) { %>
+      <a href="?page=<%= currentPage - 1 %>&search=<%= filters.search %>&price=<%= filters.price %>" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Prev</a>
+    <% } %>
+    <span class="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded">Page <%= currentPage %> of <%= totalPages %></span>
+    <% if (currentPage < totalPages) { %>
+      <a href="?page=<%= currentPage + 1 %>&search=<%= filters.search %>&price=<%= filters.price %>" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Next</a>
+    <% } %>
+  </div>
+  
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-70 hidden items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl w-full max-w-xl relative">
+      <button onclick="closeModal()" class="absolute top-2 right-2 text-gray-700 dark:text-gray-200 hover:text-red-500">✕</button>
+      <!-- Swiper Carousel -->
+      <div class="swiper mySwiper">
+        <div class="swiper-wrapper" id="carouselImages"></div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Skeleton Loader -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const hotels = [...document.querySelectorAll('.hotel-card')];
+      const searchInput = document.getElementById('searchInput');
+      const priceFilter = document.getElementById('priceFilter');
+  
+      function filterHotels() {
+        const query = searchInput.value.toLowerCase();
+        const priceVal = priceFilter.value;
+        let [min, max] = [0, Infinity];
+  
+        if (priceVal !== "all") {
+          [min, max] = priceVal.split('-').map(Number);
+          if (!max) max = Infinity;
+        }
+  
+        hotels.forEach(card => {
+          const name = card.querySelector('.hotel-name').innerText.toLowerCase();
+          const price = parseInt(card.querySelector('.hotel-price').innerText.replace('₦', '')) || 0;
+          const matches = name.includes(query) && price >= min && price <= max;
+          card.classList.toggle('hidden', !matches);
+        });
+      }
+  
+      searchInput.addEventListener('input', filterHotels);
+      priceFilter.addEventListener('change', filterHotels);
+    });
+  
+    function openModal(index) {
+      const hotel = <%- JSON.stringify(hotels) %>[index];
+      const images = [
+        hotel.firstPhotoUrlA,
+        hotel.firstPhotoUrlB,
+        hotel.firstPhotoUrlC
+      ];
+      const captions = [
+        hotel.firstPhotoDescriptionA,
+        hotel.firstPhotoDescriptionB,
+        hotel.firstPhotoDescriptionC
+      ];
+  
+      const container = document.getElementById('carouselImages');
+      container.innerHTML = images.map((url, i) => `
+        <div class="swiper-slide">
+          <img src="${url}" alt="${captions[i]}" class="w-full h-64 object-cover rounded">
+          <p class="text-sm mt-2 text-center text-gray-600 dark:text-gray-300">${captions[i]}</p>
+        </div>
+      `).join('');
+  
+      document.getElementById('modal').classList.remove('hidden');
+  
+      new Swiper(".mySwiper", {
+        autoplay: { delay: 2500 },
+        loop: true,
+      });
+    }
+  
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+    }
+  </script>
+  
+  <!-- SwiperJS CDN -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  

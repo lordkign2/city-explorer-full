@@ -9,22 +9,28 @@
 
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
     <!-- Total Cities -->
-    <div class="p-6 bg-blue-100 dark:bg-blue-900 rounded-lg shadow" data-aos="zoom-in">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Cities</h2>
-      <p class="text-4xl font-bold text-blue-700 dark:text-blue-300"><%= cityCount %></p>
-    </div>
+    <a href="/admin/cities">
+      <div class="p-6 bg-blue-100 dark:bg-blue-900 rounded-lg shadow" data-aos="zoom-in">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Cities</h2>
+        <p class="text-4xl font-bold text-blue-700 dark:text-blue-300"><%= cityCount %></p>
+      </div>
+    </a>
 
     <!-- Total Countries -->
+   <a href="/admin/countries">
     <div class="p-6 bg-green-100 dark:bg-green-900 rounded-lg shadow" data-aos="zoom-in" data-aos-delay="100">
       <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Countries</h2>
       <p class="text-4xl font-bold text-green-700 dark:text-green-300"><%= countryCount %></p>
     </div>
+   </a>
 
     <!-- Total Users -->
-    <div class="p-6 bg-purple-100 dark:bg-purple-900 rounded-lg shadow" data-aos="zoom-in" data-aos-delay="200">
-      <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Users</h2>
-      <p class="text-4xl font-bold text-purple-700 dark:text-purple-300"><%= userCount %></p>
-    </div>
+    <a href="/admin/users">
+      <div class="p-6 bg-purple-100 dark:bg-purple-900 rounded-lg shadow" data-aos="zoom-in" data-aos-delay="200">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Total Users</h2>
+        <p class="text-4xl font-bold text-purple-700 dark:text-purple-300"><%= userCount %></p>
+      </div>
+  </a>
   </div>
 </section>
 

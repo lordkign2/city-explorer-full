@@ -1,29 +1,23 @@
-// models/Trivia.js
+
 const mongoose = require('mongoose');
 
-const triviaSchema = new mongoose.Schema({
+const triviaLogSchema = new mongoose.Schema({
+  city: String,
+  question: String,
+  selectedAnswer: String,
+  correctAnswer: String,
+  isCorrect: Boolean,
+  score: Number,
+  streak: Number,
+  timestamp: {
+    type: Date,
+    default: Date.now,
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
-  },
-  cityId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'City',
-    required: true
-  },
-  score: {
-    type: Number,
-    required: true
-  },
-  totalQuestions: {
-    type: Number,
-    required: true
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now
+    required: false
   }
 });
 
-module.exports = mongoose.model('Trivia', triviaSchema);
+module.exports = mongoose.model('TriviaLog', triviaLogSchema);

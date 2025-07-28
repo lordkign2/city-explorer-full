@@ -16,10 +16,4 @@ router.get('/settings', dashboardController.getSettings);
 // // POST /dashboard/settings
 router.post('/settings', dashboardController.updateSettings);
 
-// // GET /dashboard/favorites
-router.get('/favorites', dashboardController.getFavorites);
-
-// // GET /dashboard/trivia-history
-router.get('/trivia-history', dashboardController.getTriviaHistory);
-
 module.exports = router;

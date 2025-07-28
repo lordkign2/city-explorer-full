@@ -2,6 +2,7 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
+<%- include('../partials/sidebar') %>
 
 
 <section class="max-w-5xl mx-auto mt-8 p-6 bg-white dark:bg-gray-900 rounded-lg shadow">
@@ -30,37 +31,68 @@
         <p class="text-red-500">Weather info unavailable</p>
       <% } %>
     </div>
+
+   <!-- Hotels-->
+  <%-include('../partials/hotels', {
+    city,
+    hotels,
+    currentPage,
+    totalPages,
+    query,
+    filters: {
+    search: query.search || '',
+    price: query.price || 'all'
+  }
+   
+  }) %>
   
-    <!-- Hotels -->
-    <!-- <div class="mb-6">
-      <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Popular Hotels</h2>
-      <%// hotels.forEach(hotel => { %>
-        <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-2 shadow">
-          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%=// hotel.name %></p>
-          <p class="text-sm text-gray-600 dark:text-gray-400"><%=// hotel.address %></p>
-        </div>
-      <%// }) %>
-    </div>  -->
+    <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Map</h2>
+    <div id="map" class="h-64 rounded mb-6 shadow"></div>
+    <!-- Leaflet-->
+        <script>
+          document.addEventListener('DOMContentLoaded', async () => {
+            const cityName = "<%= city %>";
+            const apiKey ="<%= apiKey %>";
+            try {
+              const res = await fetch(
+                `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+                  cityName
+                )}&key=${apiKey}&limit=1`
+              );
+              const data = await res.json();
+              
+              if (data.results && data.results.length > 0) {
+                const { lat, lng } = data.results[0].geometry;
+        
+                const map = L.map("map").setView([lat, lng], 5);
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                  maxZoom: 18,
+                  attribution: '&copy; OpenStreetMap contributors',
+                }).addTo(map);
+        
+                L.marker([lat, lng])
+                  .addTo(map)
+                  .bindPopup(cityName)
+                  .openPopup();
+              } else {
+                alert("Could not find location for this city.");
+              }
+            } catch (error) {
+              console.error("Geocoding failed:", error);
+              alert("Something went wrong while fetching the map.");
+            }
+          });
+        </script>
   
     <!-- Schools -->
     <div class="mb-6">
       <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Educational Institutions</h2>
       <% schools.forEach(school => { %>
         <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded mb-2 shadow">
-          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%= schools.city %></p>
-          <p class="text-sm text-gray-600 dark:text-gray-400"><%= schools.mockSchools %></p>
+          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%= school%></p>
+          <p class="text-sm text-gray-600 dark:text-gray-400"><%= school %></p>
         </div>
       <% }) %>
-    </div>
-  
-    <!-- Fun Facts -->
-    <div class="mb-6">
-      <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-2">Fun Facts</h2>
-      <ul class="list-disc pl-6 text-gray-700 dark:text-gray-300">
-        <%// city.funFacts.forEach(fact => { %>
-          <li><%=// fact %></li>
-        <%// }) %>
-      </ul>
     </div>
 </section>
 

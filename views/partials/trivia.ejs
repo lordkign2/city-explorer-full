@@ -1,26 +1,134 @@
-<!-- .views/partial/trivia.ejs/ -->
-<section class="mt-10">
-    <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Trivia Quiz</h2>
-  
-    <% if (trivia && trivia.length > 0) { %>
-      <form id="trivia-form" class="space-y-6" action="/cities/<%= city._id %>/trivia" method="POST">
-        <% trivia.forEach((q, index) => { %>
-          <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded shadow">
-            <p class="mb-2 text-gray-800 dark:text-gray-200"><strong>Q<%= index + 1 %>:</strong> <%= q.question %></p>
-            <% q.options.forEach(opt => { %>
-              <label class="block mb-1 text-gray-700 dark:text-gray-300">
-                <input type="radio" name="answers[<%= index %>]" value="<%= opt %>" required class="mr-2" />
-                <%= opt %>
-              </label>
-            <% }) %>
-            <input type="hidden" name="questions[<%= index %>]" value="<%= q.question %>">
-            <input type="hidden" name="correctAnswers[<%= index %>]" value="<%= q.answer %>">
-          </div>
-        <% }) %>
-  
-        <button type="submit" class="btn btn-primary w-full">Submit Answers</button>
-      </form>
-    <% } else { %>
-      <p class="text-gray-600 dark:text-gray-400">No trivia questions available for this city yet.</p>
-    <% } %>
-  </section>
+<div id="trivia-game" class="bg-white dark:bg-gray-900 rounded-xl p-6 shadow-lg transition-all max-w-xl mx-auto mt-8">
+  <h2 class="text-2xl font-bold mb-4 text-center text-blue-700 dark:text-white">🏙️ Trivia Challenge</h2>
+  <div id="question-box" class="space-y-4">
+    <p id="question" class="text-lg font-medium dark:text-white"></p>
+    <div id="options" class="space-y-2 dark:text-white"></div>
+  </div>
+
+  <div id="feedback" class="mt-4 text-center text-lg font-semibold hidden"></div>
+
+  <div class="mt-6 flex justify-between items-center text-sm text-white dark:text-gray-400">
+    <span>Score: <span id="score">0</span></span>
+    <a href="/cities/trivia/leaderboard/<%= cityName %>"
+    class="px-5 py-2 rounded-full bg-gradient-to-r from-blue-700 to-indigo-600 text-white text-sm font-medium 
+      shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
+    >
+    Leaderboard
+    </a>
+    <button id="next-question" class="text-blue-600 hover:underline hidden">Next ➡️</button>
+    <span>Streak: <span id="streak">0</span></span>
+  </div>
+
+  <div id="result" class="mt-6 text-center text-xl font-bold hidden"></div>
+</div>
+
+<script>
+  const city = "<%= cityName %>"; // Provided from server
+
+  let sessionCount = 0;
+  let currentQuestion = null;
+  let score = 0;
+  let streak = 0;
+  const maxQuestions = 10;
+
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+  const feedbackEl = document.getElementById("feedback");
+  const nextBtn = document.getElementById("next-question");
+  const scoreEl = document.getElementById("score");
+  const streakEl = document.getElementById("streak");
+  const resultEl = document.getElementById("result");
+
+  function decodeHTML(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  }
+
+  async function loadTrivia() {
+    if (sessionCount >= maxQuestions) {
+      showFinalResult();
+      return;
+    }
+
+    const res = await fetch(`/cities/<%= cityId %>/trivia/<%= cityName %>`);
+    const data = await res.json();
+    currentQuestion = data;
+
+    feedbackEl.classList.add("hidden");
+    nextBtn.classList.add("hidden");
+
+    questionEl.innerHTML = decodeHTML(data.question);
+    optionsEl.innerHTML = "";
+    data.options.forEach(opt => {
+      const btn = document.createElement("button");
+      btn.textContent = decodeHTML(opt);
+      btn.className = "px-3 py-2 m-2 rounded bg-blue-100 hover:bg-blue-200 dark:bg-gray-700 dark:hover:bg-gray-600 transition";
+      btn.onclick = () => handleAnswer(opt, data.correct_answer);
+      optionsEl.appendChild(btn);
+    });
+  }
+
+  function handleAnswer(selected, correct) {
+    const buttons = optionsEl.querySelectorAll("button");
+    buttons.forEach(btn => btn.disabled = true);
+
+    const isCorrect = selected === correct;
+
+    if (isCorrect) {
+      score++;
+      streak++;
+      feedbackEl.textContent = "✅ Correct!";
+      feedbackEl.classList.remove("text-red-600");
+      feedbackEl.classList.add("text-green-600");
+    } else {
+      streak = 0;
+      feedbackEl.textContent = `❌ Wrong. Correct answer: ${correct}`;
+      feedbackEl.classList.remove("text-green-600");
+      feedbackEl.classList.add("text-red-600");
+    }
+
+    feedbackEl.classList.remove("hidden");
+    scoreEl.textContent = score;
+    streakEl.textContent = streak;
+    nextBtn.classList.remove("hidden");
+
+    sessionCount++;
+
+    // Submit to backend
+    fetch(`/cities/<%= cityId %>/trivia`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        city,
+        question: currentQuestion.question,
+        selectedAnswer: selected,
+        correctAnswer: correct,
+        isCorrect,
+        score,
+        streak
+      })
+    }).catch(console.error);
+  }
+
+  function showFinalResult() {
+    questionEl.textContent = '';
+    optionsEl.innerHTML = '';
+    feedbackEl.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+    
+    const message = score > 5
+      ? "🎉 You Win! Great job!"
+      : "😢 Try again to beat the high score!";
+    
+    resultEl.textContent = `${message} Final Score: ${score}/${maxQuestions}`;
+    resultEl.classList.remove("hidden");
+  }
+
+  nextBtn.onclick = () => {
+    loadTrivia();
+  };
+
+  // Start
+  loadTrivia();
+</script>

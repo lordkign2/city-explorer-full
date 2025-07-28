@@ -1,18 +1,38 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar') %>
 <%- include('../partials/flashMessages') %>
+<%- include('../partials/sidebar') %>
 
 <section class="max-w-5xl mx-auto mt-10 p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md">
   <!-- City Name -->
   <h1 class="text-4xl font-bold mb-6 text-gray-800 dark:text-white text-center">
-    <%= city.name %>, <%= city.countryName %>
+    
+      <img
+        src="https://flagcdn.com/24x18/<%= city.country.code.toLowerCase() %>.png"
+        alt="<%= city.country.name %> flag"
+        class="inline-block w-9 h-7 rounded"
+      />
+    <%= city.name %>, <%= city.country.name %>
+   
   </h1>
-
+  
   <!-- Hero Image -->
   <div class="mb-8">
     <img src="<%= city.imageUrl %>" alt="<%= city.name %> image"
       class="w-full rounded-lg object-cover h-64 shadow" />
   </div>
+  <button
+  id="favoriteBtn"
+  data-city="<%= city.name %>"
+  class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition"
+>
+  <span id="favoriteIcon">
+    <%= user.favorites.includes(city.name) ? '💖' : '🤍' %>
+  </span>
+  <span id="favoriteText">
+    <%= user.favorites.includes(city.name) ? 'Unfavorite' : 'Favorite' %>
+  </span>
+</button>
 
   <!-- Weather Section -->
   <div class="mb-8">
@@ -26,7 +46,8 @@
       <p class="text-red-500">Weather info unavailable</p>
     <% } %>
   </div>
-
+  <!-- Trivia -->
+  <%- include('../partials/trivia', { cityName: city.name, cityId: cityId }) %>
   <!-- Photo Carousel -->
 <!-- <div class="mb-8">
   <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">📷 City Gallery</h2>
@@ -67,8 +88,8 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <% schools.forEach(school => { %>
         <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow">
-          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%= school.name %></p>
-          <p class="text-sm text-gray-600 dark:text-gray-400"><%= school.address %></p>
+          <p class="text-lg font-semibold text-gray-800 dark:text-white"><%= school %></p>
+          <p class="text-sm text-gray-600 dark:text-gray-400"><%= school %></p>
         </div>
       <% }) %>
     </div>
@@ -84,19 +105,99 @@
     </ul>
   </div>
 
+  <!-- Hotels-->
+  <%-/*  include('../partials/hotels', {
+    city,
+    hotels,
+    currentPage,
+    totalPages,
+    query,
+    filters: {
+    search: query.search || '',
+    price: query.price || 'all'
+  }
+   
+  }) */ %>
+  
   <!-- Map -->
   <div class="mb-8">
     <h2 class="text-2xl font-semibold text-gray-700 dark:text-white mb-3">🗺️ Map</h2>
     <div id="map" class="w-full h-64 rounded-lg shadow"></div>
     <script>
-      const map = L.map('map').setView([<%= city.lat %>, <%= city.lng %>], 12);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-      L.marker([<%= city.lat %>, <%= city.lng %>]).addTo(map).bindPopup('<%= city.name %>').openPopup();
+      document.addEventListener('DOMContentLoaded', async () => {
+        const cityName = "<%= city.name %>";
+        const apiKey = "074065632fec49cf8ea28486935077c7";
+    
+        try {
+          const res = await fetch(
+            `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(
+              cityName
+            )}&key=${apiKey}&limit=1`
+          );
+          const data = await res.json();
+          
+          if (data.results && data.results.length > 0) {
+            const { lat, lng } = data.results[0].geometry;
+    
+            const map = L.map("map").setView([lat, lng], 5);
+            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              maxZoom: 18,
+              attribution: '&copy; OpenStreetMap contributors',
+            }).addTo(map);
+    
+            L.marker([lat, lng])
+              .addTo(map)
+              .bindPopup(cityName)
+              .openPopup();
+          } else {
+            alert("Could not find location for this country.");
+          }
+        } catch (error) {
+          console.error("Geocoding failed:", error);
+          alert("Something went wrong while fetching the map.");
+        }
+      });
     </script>
   </div>
+
 
   <!-- Chat -->
   <%- include('../partials/chat', { cityId, messages, user }) %>
 </section>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const favoriteBtn = document.getElementById("favoriteBtn");
+
+    if (favoriteBtn) {
+      favoriteBtn.addEventListener("click", async () => {
+        const city = favoriteBtn.dataset.city;
+
+        try {
+          const res = await fetch("/cities/toggle", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest",
+            },
+            body: JSON.stringify({ city }),
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            const isFavorited = data.favorites.includes(city);
+            document.getElementById("favoriteIcon").textContent = isFavorited ? "💖" : "🤍";
+            document.getElementById("favoriteText").textContent = isFavorited ? "Unfavorite" : "Favorite";
+          } else {
+            alert("Failed to toggle favorite.");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Error toggling favorite.");
+        }
+      });
+    }
+  });
+</script>
 
 <%- include('../partials/footer') %>

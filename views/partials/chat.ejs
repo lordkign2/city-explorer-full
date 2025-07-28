@@ -43,6 +43,7 @@
     >
       Send
     </button>
+    <p id="mute-countdown" class="text-red-500 font-semibold text-sm mt-2"></p>
   </form>
 </section>
 
@@ -76,6 +77,23 @@ window.addEventListener('DOMContentLoaded', () => {
       chatInput.value = '';
     }
   });
+  socket.on('muted', (data) => alert(data || "🚫 You’ve been muted for 10 minutes due to repeated profanity."));
+  socket.on('warning', (data) => alert(data || "⚠️ Please stop using foul language. One more and you’ll be muted for 10 minutes."));
+  socket.on("mutedCountdown", (secondsLeft) => {
+  const countdownEl = document.getElementById("mute-countdown");
+  if (!countdownEl) return;
+
+  let remaining = secondsLeft;
+
+  const interval = setInterval(() => {
+    if (remaining <= 0) {
+      countdownEl.innerText = "";
+      clearInterval(interval);
+    } else {
+      countdownEl.innerText = `⏳ You are muted for ${remaining--}s`;
+    }
+  }, 1000);
+});
 
   socket.on('chatMessage', (data) => {
     const li = document.createElement('li');

@@ -16,12 +16,12 @@ async function getCityImage(cityName) {
       }
     });
 
-    if (res.data.results.length > 0) {
+    //if (res.data.results[0].length > 0) {
       return res.data.results[0].urls.regular;
-    }
-
+   // }
+    
     // fallback default
-    return '/images/default-city.jpg';
+   // return '/images/default-city.jpg';
   } catch (err) {
     console.error('Unsplash fetch failed:', err.message);
     return '/images/default-city.jpg';

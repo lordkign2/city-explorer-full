@@ -1,5 +1,5 @@
 const getSchools = (cityName) => {
-    // You can expand this with real API or DB later
+    // Should i expand this with real API or DB
     const mockSchools = {
       Lagos: ['Queens College', 'King’s College', 'University of Lagos'],
       Nairobi: ['Nairobi School', 'Alliance High', 'Strathmore University'],

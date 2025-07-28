@@ -1,0 +1,17 @@
+<div class="max-w-4xl mx-auto mt-10">
+  <h1 class="text-3xl font-bold mb-6">Your Favorite Cities 💖</h1>
+
+  <% if (favoriteCities.length === 0) { %>
+    <p>You haven't favorited any cities yet.</p>
+  <% } else { %>
+    <ul class="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <% favoriteCities.forEach(city => { %>
+        <li class="bg-white dark:bg-gray-800 shadow p-4 rounded-lg text-center">
+          <a href="/cities/<%= city %>" class="text-lg font-semibold text-blue-600 hover:underline">
+            <%= city %>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
