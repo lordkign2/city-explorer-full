@@ -87,12 +87,12 @@ exports.register = async (req, res) => {
       if (err) {
         req.flash("error", "Login after registration failed");
         return res.redirect("/auth/login");
+      } else {
+        req.session.userId = newUser._id;
+        req.session.userRole = 'user';
+        req.flash('success', 'Registration successful');
+        res.redirect('/dashboard');
       }
-
-      req.session.userId = newUser._id;
-      req.session.userRole = 'user';
-      req.flash('success', 'Registration successful');
-      res.redirect('/dashboard');
     });
 
   } catch (err) {
