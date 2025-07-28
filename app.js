@@ -119,11 +119,11 @@ io.on("connection", (socket) => {
           else console.log("Infraction emailed:", info.response);
         });
       }
-      // Setup transporter (e.g., Gmail)
+      // Setup transporter ( Gmail)
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: process.env.EMAIL_USER,
+          user: process.env.USER_EMAIL,
           pass: process.env.EMAIL_PASS
         }
       });

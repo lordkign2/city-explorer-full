@@ -45,16 +45,9 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
-    // Send welcome email
-    const transporter = nodemailer.createTransport({
-      service: 'gmail', // or your email service provider
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
+    
 
-    await transporter.sendMail({
+    const mailOptions = {
       from: '"City Explorer" <no-reply@cityexplorer.com>',
       to: newUser.email,
       subject: '🎉 Welcome to LDS City Explorer!',
@@ -80,8 +73,21 @@ exports.register = async (req, res) => {
       </div>
     </div>
       `
+    };
+     // Send welcome email
+     const transporter = nodemailer.createTransport({
+      service: 'gmail', // or your email service provider
+      auth: {
+        user: process.env.USER_EMAIL,
+        pass: process.env.EMAIL_PASS
+      }
     });
 
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) console.error("Email error:", err);
+      else console.log("Infraction emailed:", info.response);
+    });
+   
     // Auto-login after registration
     req.login(newUser, (err) => {
       if (err) {

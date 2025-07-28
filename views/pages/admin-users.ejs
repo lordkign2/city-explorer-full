@@ -28,9 +28,9 @@
       <tbody id="usersTableBody">
         <% users.forEach(user => { %>
           <tr class="border-b dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-sm">
-            <td class="p-3"><%= user.username %></td>
-            <td class="p-3"><%= user.email %></td>
-            <td class="p-3"><%= user.isAdmin ? 'Admin' : 'User' %></td>
+            <td class="p-3 dark:text-white"><%= user.username %></td>
+            <td class="p-3 dark:text-white"><%= user.email %></td>
+            <td class="p-3 dark:text-white"><%= user.isAdmin ? 'Admin' : 'User' %></td>
             <td class="p-3 text-center space-y-2">
               <div class="space-x-2">
                 <button
