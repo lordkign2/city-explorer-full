@@ -158,8 +158,6 @@ exports.bulkDeleteCities = async (req, res) => {
   }
 };
 
-
-
 // ==========================
 //       COUNTRIES CRUD
 // ==========================
@@ -339,8 +337,6 @@ exports.suspendUser = async (req, res) => {
     res.redirect('/admin/users');
   }
 };
-
-
 
 exports.toggleAdmin = async (req, res) => {
   try {

@@ -146,7 +146,6 @@ exports.login = async (req, res, next) => {
         req.flash('success', `Welcome back, ${user.username}!`);
         return res.redirect('/dashboard');
       });
-      
     })(req, res, next);
     // const { email, password } = req.body;
     // const isMatch = await User.comparePassword(password);  n =============
