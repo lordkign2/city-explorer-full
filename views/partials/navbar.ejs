@@ -24,8 +24,7 @@
         <a href="/dashboard" class="text-sm text-gray-700 dark:text-gray-200 hover:underline"><%= user.username || "Dashboard" %> </a>
         <a href="/auth/logout" class="text-sm text-red-500 dark:text-red-400 hover:underline">Logout</a>
         <img src="<%= user.avatarUrl || '/images/default-avatar.png' %>" alt="avatar" class="w-8 h-8 rounded-full border" />
-      <% } %>
-      else { %>
+      <% } else {%>
         <a href="/auth/login" class="text-sm text-gray-700 dark:text-gray-200 hover:underline">Login</a>
         <a href="/auth/register" class="text-sm text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">Sign Up</a>
       <% } %>
