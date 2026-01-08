@@ -1,7 +1,9 @@
 // controllers/cityController.js
 const mongoose = require('mongoose');
 const City = require('../models/City');
+const Place = require('../models/Place');
 const Trivia = require('../models/Trivia');
+const Review = require('../models/Review');
 const fetchWeather = require('../utils/weather');
 const fetchHotels = require('../utils/hotels');
 const fetchSchools = require('../utils/schools');
@@ -76,6 +78,26 @@ exports.getCityPage = async (req, res) => {
       await City.findByIdAndUpdate(city._id, { imageUrl });
     }
 
+    // Get related places (top 10 attractions, restaurants, hotels)
+    const places = await Place.find({ cityId })
+      .sort({ rating: -1, viewCount: -1 })
+      .limit(10);
+
+    // Get recent reviews for this city
+    const reviews = await Review.find({ cityId })
+      .populate('userId', 'username avatarUrl')
+      .sort({ createdAt: -1 })
+      .limit(5);
+
+    // Calculate average rating
+    const ratingStats = await Review.aggregate([
+      { $match: { cityId: mongoose.Types.ObjectId(cityId) } },
+      { $group: { _id: null, average: { $avg: '$rating' }, count: { $sum: 1 } } }
+    ]);
+
+    const avgRating = ratingStats.length > 0 ? ratingStats[0].average : 0;
+    const reviewCount = ratingStats.length > 0 ? ratingStats[0].count : 0;
+
     const messages = await Message.find({ cityId }).sort({ timestamp: 1 }).lean();
 
     const allHotels = await fetchHotels(city.name);
@@ -85,7 +107,7 @@ exports.getCityPage = async (req, res) => {
     const perPage = 8;
     const filteredHotels = allHotels.filter(h =>
       h.hotelName.toLowerCase().includes(search) &&
-      parseFloat(h.price.replace(/[^\d.]/g, '')) <= maxPrice
+      parseFloat(h.price.replace(/[^^d.]/g, '')) <= maxPrice
     ); 
     const paginatedHotels = filteredHotels.slice((page - 1) * perPage, page * perPage);
     
@@ -93,6 +115,10 @@ exports.getCityPage = async (req, res) => {
     res.render('pages/city', {
       title: `${city.name} | City Info`,
       city,
+      places,
+      reviews,
+      avgRating,
+      reviewCount,
       hotels: paginatedHotels,
       currentPage: page,
       totalPages: Math.ceil(filteredHotels.length / perPage),
@@ -112,6 +138,7 @@ exports.getCityPage = async (req, res) => {
 
 exports.getTrivia = async (req, res) => {
   const city = req.params.city.toLowerCase();
+  const userId = req.user ? req.user._id : null;
   const redisKey = `trivia:${city}`;
 
   try {
@@ -128,7 +155,7 @@ exports.getTrivia = async (req, res) => {
         // Update Redis with remaining questions
         await redisClient.setEx(redisKey, 3600, JSON.stringify(questions)); // 1 hour TTL
 
-        return res.json(formatTrivia(trivia));
+        return res.json(formatTrivia(trivia, userId));
       }
     }
 
@@ -152,17 +179,21 @@ exports.getTrivia = async (req, res) => {
     const trivia = selectedQuestions.shift(); // Get first question
     await redisClient.setEx(redisKey, 3600, JSON.stringify(selectedQuestions)); // Cache rest
 
-    function formatTrivia(trivia) {
+    function formatTrivia(trivia, userId) {
       const allAnswers = [...trivia.incorrectAnswers, trivia.correctAnswer];
       const shuffledAnswers = allAnswers.sort(() => Math.random() - 0.5);
     
       return {
+        questionId: trivia.questionId || require('crypto').randomBytes(8).toString('hex'),
         question: trivia.question,
         correct_answer: trivia.correctAnswer,
         options: shuffledAnswers,
+        difficulty: trivia.difficulty || 'medium',
+        category: trivia.category || 'geography',
+        userId: userId
       };
     }
-    return res.json(formatTrivia(trivia));
+    return res.json(formatTrivia(trivia, userId));
 
   } catch (err) {
     console.error("Trivia error:", err);
@@ -175,25 +206,66 @@ exports.submitTrivia = async (req, res) => {
     const {
       city,
       question,
+      questionId,
       selectedAnswer,
       correctAnswer,
       isCorrect,
       score,
       streak,
+      difficulty,
+      category
     } = req.body;
     const userId = req.user?._id?.toString()
+    
+    // Calculate points based on difficulty
+    const difficultyPoints = {
+      easy: 10,
+      medium: 20,
+      hard: 30
+    };
+    
+    const pointsAwarded = isCorrect ? difficultyPoints[difficulty] || 20 : 0;
+    
     const log = new Trivia({
       city,
+      cityId: req.body.cityId, // If provided
       question,
+      questionId,
       selectedAnswer,
       correctAnswer,
       isCorrect,
       score,
       streak,
+      difficulty,
+      category,
+      pointsAwarded,
       userId
     });
 
     await log.save();
+
+    // Update user points and check for badges
+    if (req.user && isCorrect) {
+      const user = await User.findById(userId);
+      if (user) {
+        user.points = (user.points || 0) + pointsAwarded;
+        
+        // Check for new badges
+        const { checkBadgeEligibility } = require('./gamificationController');
+        const newBadges = await checkBadgeEligibility(userId);
+        
+        await user.save();
+        
+        // Return badge information
+        if (newBadges.length > 0) {
+          return res.json({ 
+            success: true, 
+            message: `Trivia saved. Congratulations! You earned ${newBadges.length} new badge(s)!`,
+            newBadges
+          });
+        }
+      }
+    }
 
     // Update Redis leaderboard
     const leaderboardKey = `trivia:leaderboard:${city.toLowerCase()}`;
@@ -204,7 +276,7 @@ exports.submitTrivia = async (req, res) => {
 
     // keep top 50
     await redisClient.zRemRangeByRank(leaderboardKey, 0, -51);
-    res.json({ success: true, message: "Trivia saved." });
+    res.json({ success: true, message: "Trivia saved.", pointsAwarded });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Error saving trivia." });

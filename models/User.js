@@ -23,12 +23,35 @@ const userSchema = new mongoose.Schema({
   avatarUrl: {
     type: String
   },
+  firstName: String,
+  lastName: String,
+  bio: String,
+  location: String,
+  preferences: {
+    budget: {
+      type: String,
+      enum: ['low', 'medium', 'high']
+    },
+    interests: [String], // e.g., ['culture', 'food', 'nature', 'nightlife']
+    notification: {
+      email: { type: Boolean, default: true },
+      push: { type: Boolean, default: true }
+    }
+  },
   isAdmin: { 
     type: Boolean,
     default: false
   
   },
+  isPremium: {
+    type: Boolean,
+    default: false
+  },
   favorites: [{type: String}],
+  savedItineraries: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Itinerary'
+  }],
   triviaScores: [
     {
       cityId: {
@@ -40,6 +63,11 @@ const userSchema = new mongoose.Schema({
       total: Number
     }
   ],
+  badges: [String], // Achieved badges
+  points: {
+    type: Number,
+    default: 0
+  },
   suspendedUntil: {
     type: Date,
     default: null
@@ -47,6 +75,10 @@ const userSchema = new mongoose.Schema({
   suspensionReason: {
     type: String,
     default: ''
+  },
+  lastActive: {
+    type: Date,
+    default: Date.now
   }
 });
 

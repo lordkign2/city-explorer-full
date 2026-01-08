@@ -26,10 +26,8 @@ const io = new Server(server);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  ssl: true,
-  tlsInsecure: true
+  // useNewUrlParser and useUnifiedTopology are deprecated in newer versions
+  // Only use the options that are still valid
 }).then(() => console.log('✅ MongoDB connected'))
   .catch(err => console.error('MongoDB error:', err));
 
@@ -82,6 +80,15 @@ app.use('/dashboard', require('./routes/dashboard'));
 app.use('/admin', require('./routes/admin'));
 app.use('/cities', require('./routes/cities'));
 app.use('/countries', require('./routes/countries'));
+app.use('/places', require('./routes/places'));
+app.use('/itineraries', require('./routes/itineraries'));
+app.use('/reviews', require('./routes/reviews'));
+app.use('/gamification', require('./routes/gamification'));
+app.use('/maps', require('./routes/maps'));
+app.use('/affiliates', require('./routes/affiliates'));
+app.use('/recommendations', require('./routes/recommendations'));
+app.use('/exports', require('./routes/exports'));
+app.use('/premium', require('./routes/premium'));
 
 const nodemailer = require("nodemailer");
 const muteDuration = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -103,6 +110,15 @@ io.on("connection", (socket) => {
 
   socket.on("chatMessage", async ({ room, text, userName, avatarUrl }) => {
     try {
+      // Setup transporter (Gmail) - moved outside the function
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.USER_EMAIL,
+          pass: process.env.EMAIL_PASS
+        }
+      });
+
       function logInfraction(userName, text) {
         // Save to DB if needed
         const mailOptions = {
@@ -119,14 +135,6 @@ io.on("connection", (socket) => {
           else console.log("Infraction emailed:", info.response);
         });
       }
-      // Setup transporter ( Gmail)
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.USER_EMAIL,
-          pass: process.env.EMAIL_PASS
-        }
-      });
 
       // Check if muted
       if (muteMap.has(userId)) {

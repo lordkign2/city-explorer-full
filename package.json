@@ -1,27 +1,30 @@
 {
-  "name": "kign-global-explorer",
-  "version": "1.0.0",
-  "description": "A full-stack global explorer app with cities, countries, trivia, chat, weather and more.",
+  "name": "city-explorer-ai",
+  "version": "2.0.0",
+  "description": "An AI-powered city exploration platform with personalized itineraries, interactive maps, and gamified trivia.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "build:css": "tailwindcss -i ./public/css/styles.css -o ./public/css/output.css --watch"
+    "build:css": "tailwindcss -i ./public/css/styles.css -o ./public/css/output.css --watch",
+    "seed:badges": "node seedBadges.js",
+    "lint": "eslint . --ext .js"
   },
   "keywords": [
-    "world",
-    "city",
-    "country",
     "travel",
+    "city",
     "explorer",
+    "ai",
+    "itinerary",
+    "maps",
+    "trivia",
     "node",
-    "global",
     "express",
     "mongodb",
-    "tailwind"
+    "pwa"
   ],
-  "author": "Umeh kingsley, LDS",
+  "author": "Umeh Kingsley",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.10.0",
@@ -43,15 +46,16 @@
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "passport-session": "^1.0.2",
+    "pdfkit": "^0.17.2",
     "profanity-check": "^0.0.3",
     "redis": "^5.5.6",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.4.23",
     "nodemon": "^3.1.10",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
-    "tailwindcss": "^4.1.10"
+    "tailwindcss": "^4.1.18"
   }
 }

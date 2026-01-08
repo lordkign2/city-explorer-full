@@ -1,11 +1,11 @@
 // routes/admin.js
 const express = require('express');
 const router = express.Router();
-const { isLoggedIn, isAdmin } = require('../middleware/auth');
+const { loginRequired, isAdmin } = require('../middleware/auth');
 const adminController = require('../controllers/adminController');
 
 // All routes here require login and admin access
-router.use(isLoggedIn, isAdmin);
+router.use(loginRequired, isAdmin);
 
 // Admin Dashboard
 router.get('/', isAdmin, adminController.getAdminDashboard);
@@ -36,7 +36,5 @@ router.delete('/users/:id', isAdmin, adminController.deleteUser);
 router.post('/users/:id/toggle-admin', isAdmin, adminController.toggleAdmin);
 router.post('/users/:id/delete', isAdmin, adminController.deleteUser);
 router.post('/suspend', isAdmin, adminController.suspendUser);
-
-
 
 module.exports = router;
